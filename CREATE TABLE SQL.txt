@@ -1,0 +1,46 @@
+CREATE TABLE employee_account (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_name VARCHAR(250) NOT NULL,
+    user_id VARCHAR(250) NOT NULL,
+    role VARCHAR(250) NOT NULL,
+    email VARCHAR(250) NOT NULL,
+    password VARCHAR(250) NOT NULL
+);
+
+CREATE TABLE employee_detail (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_name VARCHAR(255) NOT NULL,
+    employee_id VARCHAR(255) NOT NULL,
+    department VARCHAR(255) NOT NULL,
+    unit VARCHAR(255) NOT NULL,
+    direct_leader VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE assessment_category (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year INT DEFAULT YEAR(NOW()) NOT NULL,
+    status INT NOT NULL,
+    category VARCHAR(255) NOT NULL,
+    weight INT NOT NULL
+);
+
+CREATE TABLE assessment_parameter (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year INT DEFAULT YEAR(NOW()) NOT NULL,
+    status INT NOT NULL,
+    status_detail INT NOT NULL,
+    parameter VARCHAR(255) NOT NULL,
+    remark VARCHAR(255) NOT NULL,
+    weight INT NOT NULL
+);
+
+CREATE TABLE assessment_department_target (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year INT DEFAULT YEAR(NOW()) NOT NULL,
+    status INT NOT NULL,
+    status_detail INT NOT NULL,
+    employee_id VARCHAR(255) NOT NULL,
+    parameter VARCHAR(255) NOT NULL,
+    remark VARCHAR(255) NOT NULL,
+    weight INT NOT NULL
+);
