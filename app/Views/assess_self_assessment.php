@@ -41,14 +41,14 @@
                 foreach ($category as $index => $categor):
                     $statusClass = isset($statusClasses[$categor['status']]) ? $statusClasses[$categor['status']] : 'dark';
                     ?>
-                    <div class="clearfix mb-20 d-flex justify-content-between align-items-center">
+                    <div class="clearfix mb-10 d-flex justify-content-between align-items-center">
                         <h4 class="text-<?= $statusClass; ?> h4">
                             <?= $categor['status']; ?>.
                             <?= $categor['category']; ?> (
                             <?= $categor['weight']; ?>%)
                         </h4>
                     </div>
-                    <div>
+                    <div class="mb-30">
                         <table class="table table-bordered tabel-assessment">
                             <thead>
                                 <tr>
@@ -63,12 +63,17 @@
                         </table>
                     </div>
                     <?php
-                    if ($index == $totalCategories - 2) {
-                        break;
-                    }
                 endforeach;
                 ?>
-
+                <div class="d-flex justify-content-end">
+                    <button id="submitBtn" type="button" class="btn btn-primary"
+                        data-id="<?php echo session('userId'); ?>" data-count="<?= $totalCategories; ?>"><i class="icon-copy fa fa-check-square"></i>
+                        Check</button>
+                    <button id="submitBtn3" type="button" class="btn btn-danger"><i
+                            class="icon-copy fa fa-minus-square"></i> Cancel</button>
+                    <button id="submitBtn2" type="button" class="btn btn-info"><i
+                            class="icon-copy fa fa-check-square-o"></i> Submit</button>
+                </div>
             </div>
         </div>
     </div>
@@ -91,11 +96,6 @@
 <script src="<?= base_url() ?>vendors/scripts/script.min.js"></script>
 <script src="<?= base_url() ?>vendors/scripts/process.js"></script>
 <script src="<?= base_url() ?>vendors/scripts/layout-settings.js"></script>
-<script src="<?= base_url() ?>src/plugins/datatables/js/jquery.dataTables.min.js"></script>
-<script src="<?= base_url() ?>src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
-<script src="<?= base_url() ?>src/plugins/datatables/js/dataTables.responsive.min.js"></script>
-<script src="<?= base_url() ?>src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
-<script src="<?= base_url() ?>vendors/scripts/datatable-setting.js"></script>
 <script src="<?= base_url() ?>vendors/sweet/sweet2.js"></script>
 
 <script src="<?= base_url() ?>assessmentJs/assess_self_assessment_view.js"></script>

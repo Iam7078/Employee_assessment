@@ -5213,3 +5213,42 @@ Style Tambahan
     align-items: center;
     text-align: center;
 }
+
+#submitBtn {
+    float: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    /* Mengatur vertikal align ikon dan teks */
+}
+
+#submitBtn .icon-copy {
+    margin-right: 5px;
+    /* Atur jarak antara ikon dan teks */
+}
+
+#submitBtn2 {
+    float: right;
+    display: none;
+    justify-content: flex-end;
+    align-items: center;
+    /* Mengatur vertikal align ikon dan teks */
+}
+
+#submitBtn2 .icon-copy {
+    margin-right: 5px;
+    /* Atur jarak antara ikon dan teks */
+}
+
+#submitBtn3 {
+    float: right;
+    display: none;
+    justify-content: flex-end;
+    align-items: center;
+    /* Mengatur vertikal align ikon dan teks */
+}
+
+#submitBtn3 .icon-copy {
+    margin-right: 5px;
+    /* Atur jarak antara ikon dan teks */
+}

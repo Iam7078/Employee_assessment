@@ -8,6 +8,8 @@ use App\Models\AssessmentDepartmentTargetModel;
 use App\Models\AssessmentParametersModel;
 use App\Models\EmployeeModel;
 
+use App\Models\SelfAssessmentDetailModel;
+use App\Models\SelfAssessmentModel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class AssessmentController extends BaseController
@@ -1023,4 +1025,105 @@ class AssessmentController extends BaseController
 
         return view('assess_self_assessment', $data);
     }
+    public function dataTabelSelfAssessment()
+    {
+        $year = date('Y');
+        $parameterModel = new AssessmentParametersModel();
+        $departmentTargetModel = new AssessmentDepartmentTargetModel();
+
+        $dataParameter = $parameterModel->where('year', $year)->findAll();
+        $dataDepartment = $departmentTargetModel->where('year', $year)->where('employee_id', session('userId'))->findAll();
+
+        $data = [];
+        foreach ($dataParameter as $item) {
+            $data[] = [
+                'id' => $item['id'],
+                'year' => $item['year'],
+                'status' => $item['status'],
+                'status_detail' => $item['status_detail'],
+                'parameter' => $item['parameter'],
+                'remark' => $item['remark'],
+                'weight' => $item['weight']
+            ];
+        }
+        foreach ($dataDepartment as $item) {
+            $data[] = [
+                'id' => $item['id'],
+                'year' => $item['year'],
+                'status' => $item['status'],
+                'status_detail' => $item['status_detail'],
+                'parameter' => $item['parameter'],
+                'remark' => $item['remark'],
+                'weight' => $item['weight']
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
+    }
+    public function cekIdSelfResult()
+    {
+        $year = date('Y');
+        $request = $this->request->getJSON();
+        $idEmployee = $request->employee_id;
+
+        $selfAssessmentModel = new SelfAssessmentModel();
+        $categoryModel = new AssessmentCategoryModel();
+        $departmentTargetModel = new AssessmentDepartmentTargetModel();
+
+        $totalWeight = $departmentTargetModel->cekTotalWeight($year, $idEmployee);
+        $maxWidth = $categoryModel->getWeightByLastStatus($year);
+
+        $cekId = $selfAssessmentModel->where('employee_id', $idEmployee)->first();
+
+        if ($cekId) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Employees Have Been Assessed This Year']);
+        }
+
+        if ($totalWeight == $maxWidth) {
+            return $this->response->setJSON(['success' => true]);
+        } else {
+            return $this->response->setJSON(['success' => false, 'message' => 'Department targets have not been met']);
+        }
+    }
+
+    public function addSelfResult()
+    {
+        $request = $this->request->getJSON();
+
+        $selfAssessmentModel = new SelfAssessmentModel();
+        $selfAssessmentDetailModel = new SelfAssessmentDetailModel();
+
+        $data = [
+            'employee_id' => $request->employee_id,
+            'final_grades' => $request->hasil_akhir
+        ];
+
+        $addData = $selfAssessmentModel->insert($data);
+
+        if ($addData) {
+            foreach ($request as $key => $value) {
+                if (preg_match('/^\d+_\d+$/', $key)) {
+                    $parts = explode('_', $key);
+                    $status = $parts[0];
+                    $status_detail = $parts[1];
+
+                    $detailData = [
+                        'employee_id' => $request->employee_id,
+                        'status' => $status,
+                        'status_detail' => $status_detail,
+                        'value' => $value
+                    ];
+
+                    $addDetailData = $selfAssessmentDetailModel->insert($detailData);
+
+                    if (!$addDetailData) {
+                    }
+                }
+            }
+
+            return $this->response->setJSON(['success' => true]);
+        } else {
+            return $this->response->setJSON(['success' => false, 'message' => 'Failed to assess']);
+        }
+    }
+
 }

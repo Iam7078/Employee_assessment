@@ -44,3 +44,19 @@ CREATE TABLE assessment_department_target (
     remark VARCHAR(255) NOT NULL,
     weight INT NOT NULL
 );
+
+CREATE TABLE self_assessment (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year INT DEFAULT YEAR(NOW()) NOT NULL,
+    employee_id VARCHAR(255) NOT NULL,
+    final_grades VARCHAR(250) NOT NULL
+);
+
+CREATE TABLE self_assessment_detail (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year INT DEFAULT YEAR(NOW()) NOT NULL,
+    employee_id VARCHAR(255) NOT NULL,
+    status INT NOT NULL,
+    status_detail INT NOT NULL,
+    value VARCHAR(250) NOT NULL
+);
