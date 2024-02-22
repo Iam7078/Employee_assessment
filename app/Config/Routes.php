@@ -70,3 +70,10 @@ $routes->get('/detail-subordinate-assess', 'AssessmentController::detailSubordin
 $routes->get('/data-tabel-leader-assessment', 'AssessmentController::dataTabelLeaderAssessment');
 $routes->post('/cek-id-leader-result', 'AssessmentController::cekIdLeaderResult');
 $routes->post('/add-leader-result', 'AssessmentController::addLeaderResult');
+
+// Assessment Senior GM Assessment
+$routes->get('/data-tabel-senior-assess', 'AssessmentController::dataTabelSeniorAssessment');
+$routes->get('/detail-senior-assess', 'AssessmentController::detailSeniorAssessment');
+$routes->get('/data-tabel-senior-assessment', 'AssessmentController::dataTabelSeniorGmAssessment');
+$routes->post('/cek-id-senior-result', 'AssessmentController::cekIdSeniorResult');
+$routes->post('/add-senior-result', 'AssessmentController::addSeniorResult');

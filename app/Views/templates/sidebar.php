@@ -83,7 +83,7 @@
                                 <span class="micon bi bi-clipboard2-check"></span><span class="mtext">Assessment</span>
                             </a>
                             <ul class="submenu">
-                                <li><a href="">Senior GM Assessment</a></li>
+                                <li><a class="ASG" href="/Em/aSen">Senior GM Assessment</a></li>
                             </ul>
                         </li>
                         <li class="dropdown">
@@ -91,7 +91,7 @@
                                 <span class="micon bi bi-file-earmark-text"></span><span class="mtext">Report</span>
                             </a>
                             <ul class="submenu">
-                                <li><a href="">Senior GM Assessment</a></li>
+                                <li><a class="RSG" href="/Em/rSen">Senior GM Assessment</a></li>
                             </ul>
                         </li>
 
