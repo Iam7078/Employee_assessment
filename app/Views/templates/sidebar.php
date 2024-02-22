@@ -115,7 +115,7 @@
                             </a>
                             <ul class="submenu">
                                 <li><a class="ASA" href="/Em/aSel">Self Assessment</a></li>
-                                <li><a class="ASB" href="">Subordinate Assessment</a></li>
+                                <li><a class="ASB" href="/Em/aLea">Subordinate Assessment</a></li>
                             </ul>
                         </li>
 
@@ -124,8 +124,8 @@
                                 <span class="micon bi bi-file-earmark-text"></span><span class="mtext">Report</span>
                             </a>
                             <ul class="submenu">
-                                <li><a href="">Self Assessment</a></li>
-                                <li><a href="">Subordinate Assessment</a></li>
+                                <li><a class="RSA" href="/Em/rSel">Self Assessment</a></li>
+                                <li><a class="RSB" href="/Em/rLea">Subordinate Assessment</a></li>
                             </ul>
                         </li>
 
@@ -149,7 +149,7 @@
                                 <span class="micon bi bi-file-earmark-text"></span><span class="mtext">Report</span>
                             </a>
                             <ul class="submenu">
-                                <li><a href="">Self Assessment</a></li>
+                                <li><a class="RSA" href="/Em/rSel">Self Assessment</a></li>
                             </ul>
                         </li>
                     <?php endif; ?>

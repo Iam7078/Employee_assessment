@@ -63,3 +63,10 @@ $routes->post('/import-department-target-sub', 'AssessmentController::importData
 $routes->get('/data-tabel-self-assessment', 'AssessmentController::dataTabelSelfAssessment');
 $routes->post('/cek-id-self-result', 'AssessmentController::cekIdSelfResult');
 $routes->post('/add-self-result', 'AssessmentController::addSelfResult');
+
+// Assessment Leader Assessment
+$routes->get('/data-tabel-subordinate-assess', 'AssessmentController::dataTabelSubordinateAssessment');
+$routes->get('/detail-subordinate-assess', 'AssessmentController::detailSubordinateAssessment');
+$routes->get('/data-tabel-leader-assessment', 'AssessmentController::dataTabelLeaderAssessment');
+$routes->post('/cek-id-leader-result', 'AssessmentController::cekIdLeaderResult');
+$routes->post('/add-leader-result', 'AssessmentController::addLeaderResult');

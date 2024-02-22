@@ -4,13 +4,13 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class SelfAssessmentModel extends Model
+class LeaderAssessmentModel extends Model
 {
-    protected $table = 'self_assessment';
+    protected $table = 'leader_assessment';
     protected $primaryKey = 'id';
     protected $allowedFields = ['year', 'employee_id',  'final_grades'];
 
-    public function getTotalDataSelf($currentYear)
+    public function getTotalDataLeader($currentYear)
     {
         $count = $this->where('year', $currentYear)->countAllResults();
 

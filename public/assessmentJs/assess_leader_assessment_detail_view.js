@@ -1,5 +1,6 @@
 $(document).ready(function () {
-    getDataAssessment();
+    var id = $('#id').text().trim();
+    getDataLeaderAssessment(id);
     var data = {};
     const Toast = Swal.mixin({
         toast: true,
@@ -18,7 +19,6 @@ $(document).ready(function () {
     });
 
     $('#submitBtn').click(function() {
-        var idCuy = $(this).data('id');
         var jumlah = $(this).data('count');
 
         var hasilPerhitunganArray = [];
@@ -44,7 +44,7 @@ $(document).ready(function () {
         var totalHasilPerhitungan = hasilPerhitunganArray.reduce((a, b) => a + b, 0);
         var totalFormatted = totalHasilPerhitungan.toFixed(2);
     
-        data['employee_id'] = idCuy;
+        data['employee_id'] = id;
         data['hasil_akhir'] = totalFormatted;
         data['jumlah'] = jumlah;
     
@@ -52,11 +52,13 @@ $(document).ready(function () {
         $("html, body").animate({ scrollTop: 0 }, "slow");
 
         var cekId = {
-            employee_id: idCuy
+            employee_id: id
         };
 
+        console.log(data);
+
         $.ajax({
-            url: '/cek-id-self-result',
+            url: '/cek-id-leader-result',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -92,7 +94,7 @@ $(document).ready(function () {
 
     $('#submitBtn2').click(function () {
         $.ajax({
-            url: '/add-self-result',
+            url: '/add-leader-result',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -125,9 +127,9 @@ $(document).ready(function () {
 
 });
 
-function getDataAssessment() {
+function getDataLeaderAssessment(id) {
     $.ajax({
-        url: '/data-tabel-self-assessment',
+        url: '/data-tabel-leader-assessment?employee_id=' + id,
         method: 'GET',
         dataType: 'json',
         success: function (response) {

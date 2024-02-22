@@ -8,6 +8,8 @@ use App\Models\AssessmentDepartmentTargetModel;
 use App\Models\AssessmentParametersModel;
 use App\Models\EmployeeModel;
 
+use App\Models\LeaderAssessmentDetailModel;
+use App\Models\LeaderAssessmentModel;
 use App\Models\SelfAssessmentDetailModel;
 use App\Models\SelfAssessmentModel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -43,6 +45,10 @@ class AssessmentController extends BaseController
             return view('data_department_leader');
         } elseif ($segment === 'aSel') {
             return $this->getDataSelfAssessment();
+        } elseif ($segment === 'aLea') {
+            return view('assess_leader_assessment');
+        } elseif ($segment === 'rSel') {
+            return $this->getDataReportSelf();
         }
 
 
@@ -159,21 +165,21 @@ class AssessmentController extends BaseController
     // Dashboard
     public function getDataDash()
     {
-        // $currentYear = date('Y');
+        $currentYear = date('Y');
 
         $employeeModel = new EmployeeModel();
-        // $selfAssess = new AssessmentResultModel();
-        // $leaderAssess = new AssessmentSubordinateResultModel();
+        $selfAssess = new SelfAssessmentModel();
+        $leaderAssess = new LeaderAssessmentModel();
         // $seniorGmAssess = new AssessmentSeniorGmResultModel();
 
         $totalDataCount = $employeeModel->getTotalDataCount();
-        // $totalDataSelf = $selfAssess->getTotalDataCount($currentYear);
-        // $totalDataSub = $leaderAssess->getTotalDataCount($currentYear);
+        $totalDataSelf = $selfAssess->getTotalDataSelf($currentYear);
+        $totalDataLeader = $leaderAssess->getTotalDataLeader($currentYear);
         // $totalDataSeniorGm = $seniorGmAssess->getTotalDataCount($currentYear);
 
         $data['totalEmployee'] = $totalDataCount;
-        // $data['totalSelf'] = $totalDataSelf;
-        // $data['totalSub'] = $totalDataSub;
+        $data['totalSelf'] = $totalDataSelf;
+        $data['totalLeader'] = $totalDataLeader;
         // $data['totalSenior'] = $totalDataSeniorGm;
 
         return view('dashboard', $data);
@@ -1015,7 +1021,7 @@ class AssessmentController extends BaseController
 
 
 
-    // Assessment
+    // Self Assessment
     public function getDataSelfAssessment()
     {
         $year = date('Y');
@@ -1124,6 +1130,183 @@ class AssessmentController extends BaseController
         } else {
             return $this->response->setJSON(['success' => false, 'message' => 'Failed to assess']);
         }
+    }
+
+
+    // Leader Assessment
+    public function dataTabelSubordinateAssessment()
+    {
+        $year = date('Y');
+        $employeeModel = new EmployeeModel();
+        $categoryModel = new AssessmentCategoryModel();
+        $departmentModel = new AssessmentDepartmentTargetModel();
+        $leaderAssessmentModel = new LeaderAssessmentModel();
+        
+        
+        $maxWeight = $categoryModel->getWeightByLastStatus($year);
+
+        $dataEmployee = $employeeModel->where('direct_leader', session('userName'))->findAll();
+
+        $data = [];
+        $dataEmployee = array_reverse($dataEmployee);
+        foreach ($dataEmployee as $item) {
+            $totalWeight = $departmentModel->cekTotalWeight($year, $item['employee_id']);
+            $cekLeaderAssess = $leaderAssessmentModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
+            
+            $userStatusCol = 'red';
+            $userStatusText = 'Unassessed';
+
+            if ($maxWeight == $totalWeight) {
+                $userStatusCol = 'blue';
+                $userStatusText = 'Already';
+            }
+
+            if ($cekLeaderAssess) {
+                $userStatusCol = 'green';
+                $userStatusText = 'Assessed';
+            }
+
+            $data[] = [
+                'id' => $item['id'],
+                'employee_name' => $item['employee_name'],
+                'employee_id' => $item['employee_id'],
+                'department' => $item['department'],
+                'unit' => $item['unit'],
+                'status_color' => $userStatusCol,
+                'status_text' => $userStatusText
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
+    }
+
+    public function detailSubordinateAssessment()
+    {
+        $employee_id = $this->request->getGet('employee_id');
+
+        $year = date('Y');
+        $employeeModel = new EmployeeModel();
+        $categoryModel = new AssessmentCategoryModel();
+
+        $data['year'] = $year;
+        $data['category'] = $categoryModel->where('year', $year)->findAll();
+        $data['employee'] = $employeeModel->where('employee_id', $employee_id)->first();
+
+        return view('assess_leader_assessment_detail', $data);
+    }
+    public function dataTabelLeaderAssessment()
+    {
+        $year = date('Y');
+        $employee_id = $this->request->getGet('employee_id');
+        $parameterModel = new AssessmentParametersModel();
+        $departmentTargetModel = new AssessmentDepartmentTargetModel();
+
+        $dataParameter = $parameterModel->where('year', $year)->findAll();
+        $dataDepartment = $departmentTargetModel->where('year', $year)->where('employee_id', $employee_id)->findAll();
+
+        $data = [];
+        foreach ($dataParameter as $item) {
+            $data[] = [
+                'id' => $item['id'],
+                'year' => $item['year'],
+                'status' => $item['status'],
+                'status_detail' => $item['status_detail'],
+                'parameter' => $item['parameter'],
+                'remark' => $item['remark'],
+                'weight' => $item['weight']
+            ];
+        }
+        foreach ($dataDepartment as $item) {
+            $data[] = [
+                'id' => $item['id'],
+                'year' => $item['year'],
+                'status' => $item['status'],
+                'status_detail' => $item['status_detail'],
+                'parameter' => $item['parameter'],
+                'remark' => $item['remark'],
+                'weight' => $item['weight']
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
+    }
+    public function cekIdLeaderResult()
+    {
+        $year = date('Y');
+        $request = $this->request->getJSON();
+        $idEmployee = $request->employee_id;
+
+        $leaderAssessmentModel = new LeaderAssessmentModel();
+        $categoryModel = new AssessmentCategoryModel();
+        $departmentTargetModel = new AssessmentDepartmentTargetModel();
+
+        $totalWeight = $departmentTargetModel->cekTotalWeight($year, $idEmployee);
+        $maxWidth = $categoryModel->getWeightByLastStatus($year);
+
+        $cekId = $leaderAssessmentModel->where('employee_id', $idEmployee)->first();
+
+        if ($cekId) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Employees Have Been Assessed This Year']);
+        }
+
+        if ($totalWeight == $maxWidth) {
+            return $this->response->setJSON(['success' => true]);
+        } else {
+            return $this->response->setJSON(['success' => false, 'message' => 'Department targets have not been met']);
+        }
+    }
+
+    public function addLeaderResult()
+    {
+        $request = $this->request->getJSON();
+
+        $leaderAssessmentModel = new LeaderAssessmentModel();
+        $leaderAssessmentDetailModel = new LeaderAssessmentDetailModel();
+
+        $data = [
+            'employee_id' => $request->employee_id,
+            'final_grades' => $request->hasil_akhir
+        ];
+
+        $addData = $leaderAssessmentModel->insert($data);
+
+        if ($addData) {
+            foreach ($request as $key => $value) {
+                if (preg_match('/^\d+_\d+$/', $key)) {
+                    $parts = explode('_', $key);
+                    $status = $parts[0];
+                    $status_detail = $parts[1];
+
+                    $detailData = [
+                        'employee_id' => $request->employee_id,
+                        'status' => $status,
+                        'status_detail' => $status_detail,
+                        'value' => $value
+                    ];
+
+                    $addDetailData = $leaderAssessmentDetailModel->insert($detailData);
+
+                    if (!$addDetailData) {
+                    }
+                }
+            }
+
+            return $this->response->setJSON(['success' => true]);
+        } else {
+            return $this->response->setJSON(['success' => false, 'message' => 'Failed to assess']);
+        }
+    }
+
+
+
+
+    // Report
+    public function getDataReportSelf()
+    {
+        $year = date('Y');
+        $categoryModel = new AssessmentCategoryModel();
+        $data['year'] = $year;
+        $data['category'] = $categoryModel->where('year', $year)->findAll();
+
+        return view('report_self_assessment', $data);
     }
 
 }

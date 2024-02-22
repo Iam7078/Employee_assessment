@@ -60,3 +60,35 @@ CREATE TABLE self_assessment_detail (
     status_detail INT NOT NULL,
     value VARCHAR(250) NOT NULL
 );
+
+CREATE TABLE leader_assessment (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year INT DEFAULT YEAR(NOW()) NOT NULL,
+    employee_id VARCHAR(255) NOT NULL,
+    final_grades VARCHAR(250) NOT NULL
+);
+
+CREATE TABLE leader_assessment_detail (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year INT DEFAULT YEAR(NOW()) NOT NULL,
+    employee_id VARCHAR(255) NOT NULL,
+    status INT NOT NULL,
+    status_detail INT NOT NULL,
+    value VARCHAR(250) NOT NULL
+);
+
+CREATE TABLE senior_gm_assessment (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year INT DEFAULT YEAR(NOW()) NOT NULL,
+    employee_id VARCHAR(255) NOT NULL,
+    final_grades VARCHAR(250) NOT NULL
+);
+
+CREATE TABLE senior_gm_assessment_detail (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year INT DEFAULT YEAR(NOW()) NOT NULL,
+    employee_id VARCHAR(255) NOT NULL,
+    status INT NOT NULL,
+    status_detail INT NOT NULL,
+    value VARCHAR(250) NOT NULL
+);
