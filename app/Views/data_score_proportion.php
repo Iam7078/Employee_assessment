@@ -8,7 +8,7 @@
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
                         <div class="title">
-                            <h4>Department Target</h4>
+                            <h4>Score Proportion</h4>
                         </div>
                         <nav aria-label="breadcrumb" role="navigation">
                             <ol class="breadcrumb">
@@ -16,7 +16,7 @@
                                     <a>Data Management</a>
                                 </li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    Department Target
+                                    Score Proportion
                                 </li>
                             </ol>
                         </nav>
@@ -26,24 +26,21 @@
 
             <div class="pd-20 card-box mb-30">
                 <div class="clearfix mb-20 d-flex justify-content-between align-items-center">
-                    <h4 class="text-black h3">Department Target Data</h4>
+                    <h4 class="text-black h3">Proportion of Assessment Score Data</h4>
                     <div class="d-flex ml-auto">
-                        <button id="btn-import-excel" type="button" class="btn btn-success mr-2"><i
-                                class="mr-1 fa fa-file-excel-o"></i> Excel</button>
                         <button data-toggle="modal" data-target="#modal-add" type="button" class="btn btn-danger"><i
                                 class="mr-1 fa fa-plus"></i> Add</button>
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="data-table table table-sm stripe hover nowrap tabel-department" id="dataTable">
+                    <table class="data-table table stripe hover nowrap tabel-score" id="dataTable">
                         <thead>
                             <tr>
                                 <th>No</th>
                                 <th>Year</th>
-                                <th>Employee Name</th>
-                                <th>Parameters</th>
-                                <th>Remark</th>
-                                <th>Weight</th>
+                                <th>Self</th>
+                                <th>Leader</th>
+                                <th>Senior GM</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -62,33 +59,27 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Add Department Target Data</h4>
+                <h4 class="modal-title" id="myLargeModalLabel">Add Data Proportion of Assessment Scores</h4>
                 <button type="button" class="close" data-dismiss="modal" id="close-add" aria-hidden="true">X</button>
             </div>
             <div class="modal-body">
                 <form id="addItemForm">
                     <div class="row">
-                        <div class="col-md-9">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label class="text-gray-800" for="user_name">Employee Id</label>
-                                <input type="text" class="form-control" id="addEmployeeId">
+                                <label class="text-gray-800" for="user_name">Self</label>
+                                <input type="number" class="form-control" id="addSelf">
+                            </div>
+                            <div class="form-group">
+                                <label class="text-gray-800" for="user_name">Leader</label>
+                                <input type="number" class="form-control" id="addLeader">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label class="text-gray-800" for="email">Weight</label>
-                                <input type="number" class="form-control" id="addWeight">
+                                <label class="text-gray-800" for="email">Senior GM</label>
+                                <input type="number" class="form-control" id="addSenior">
                             </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="text-gray-800" for="user_name">Assessment Parameters</label>
-                                <input type="text" class="form-control" id="addParameter">
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <label for="inputAddress5" class="form-label">Remark</label>
-                            <textarea class="form-control" id="addRemark" style="height: 100px;"></textarea>
                         </div>
                     </div>
                 </form>
@@ -107,27 +98,27 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myLargeModalLabel">Edit Department Target Data</h4>
+                <h4 class="modal-title" id="myLargeModalLabel">Edit Assessment Score Proportion Data</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
             </div>
             <div class="modal-body">
                 <form id="editItemForm">
                     <div class="row">
-                        <div class="col-md-9">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label class="text-gray-800" for="user_name">Assessment Parameters</label>
-                                <input type="text" class="form-control" id="editParameter">
+                                <label class="text-gray-800" for="user_name">Self</label>
+                                <input type="number" class="form-control" id="editSelf">
+                            </div>
+                            <div class="form-group">
+                                <label class="text-gray-800" for="user_name">Leader</label>
+                                <input type="number" class="form-control" id="editLeader">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label class="text-gray-800" for="email">Weight</label>
-                                <input type="number" class="form-control" id="editWeight">
+                                <label class="text-gray-800" for="email">Senior GM</label>
+                                <input type="number" class="form-control" id="editSenior">
                             </div>
-                        </div>
-                        <div class="col-12">
-                            <label for="inputAddress5" class="form-label">Remark</label>
-                            <textarea class="form-control" id="editRemark" style="height: 100px;"></textarea>
                         </div>
                     </div>
                 </form>
@@ -165,7 +156,7 @@
 
 <script>
     function toggleClasses() {
-        var iaElements = document.querySelectorAll('.DDT');
+        var iaElements = document.querySelectorAll('.DSP');
         iaElements.forEach(function (element) {
             element.classList.toggle('active');
         });
@@ -187,7 +178,7 @@
 <script src="<?= base_url() ?>vendors/scripts/datatable-setting.js"></script>
 <script src="<?= base_url() ?>vendors/sweet/sweet2.js"></script>
 
-<script src="<?= base_url() ?>assessmentJs/data_department_targets_view.js"></script>
+<script src="<?= base_url() ?>assessmentJs/data_score_proportion_view.js"></script>
 
 </body>
 

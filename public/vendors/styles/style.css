@@ -5252,3 +5252,30 @@ Style Tambahan
     margin-right: 5px;
     /* Atur jarak antara ikon dan teks */
 }
+
+.tabel-score th:nth-child(1),
+.tabel-score td:nth-child(1) {
+    width: 30px !important;
+    align-items: center;
+    text-align: center;
+}
+.tabel-score th:nth-child(2),
+.tabel-score td:nth-child(2),
+.tabel-score th:nth-child(3),
+.tabel-score td:nth-child(3),
+.tabel-score th:nth-child(4),
+.tabel-score td:nth-child(4),
+.tabel-score th:nth-child(5),
+.tabel-score td:nth-child(5),
+.tabel-score th:nth-child(6),
+.tabel-score td:nth-child(6) {
+    align-items: center;
+    text-align: center;
+}
+
+.tabel-final th:nth-child(1),
+.tabel-final td:nth-child(1) {
+    width: 30px !important;
+    align-items: center;
+    text-align: center;
+}

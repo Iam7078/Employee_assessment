@@ -92,3 +92,11 @@ CREATE TABLE senior_gm_assessment_detail (
     status_detail INT NOT NULL,
     value VARCHAR(250) NOT NULL
 );
+
+CREATE TABLE score_proportion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year INT DEFAULT YEAR(NOW()) NOT NULL,
+    self INT NOT NULL,
+    leader INT NOT NULL,
+    senior_gm INT NOT NULL
+);

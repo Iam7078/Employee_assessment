@@ -65,10 +65,10 @@
                                 <li><a class="DCA" href="/Em/dCat">Category</a></li>
                                 <li><a class="DAP" href="/Em/dPar">Assessment Parameter</a></li>
                                 <li><a class="DDT" href="/Em/dTar">Department Targets</a></li>
-                                <li><a class="DSA" href="/Em/dSelAs">Self Assessment Result</a></li>
-                                <li><a class="DLA" href="/Em/dSubAs">Leader Assessment Result</a></li>
-                                <li><a class="DGM" href="/Em/dSenAs">Senior GM Assessment Result</a></li>
-                                <li><a class="DSP" href="/Em/dValCal">Score Proportion</a></li>
+                                <li><a class="DSA" href="/Em/dReSel">Self Assessment Result</a></li>
+                                <li><a class="DLA" href="/Em/dReLea">Leader Assessment Result</a></li>
+                                <li><a class="DGM" href="/Em/dReSen">Senior GM Assessment Result</a></li>
+                                <li><a class="DSP" href="/Em/dScPr">Score Proportion</a></li>
                                 <li><a class="DFA" href="/Em/dFinRe">Final Assessment Result</a></li>
                             </ul>
                         </li>

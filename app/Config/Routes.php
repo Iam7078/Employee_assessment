@@ -51,6 +51,24 @@ $routes->post('/delete-assessment-department-target', 'AssessmentController::del
 $routes->post('/import-assessment-department-target', 'AssessmentController::importAllDataDepartmentTarget');
 // Doneee
 
+// SA Result Data Management
+$routes->get('/data-tabel-sa-result', 'AssessmentController::dataTabelSaResult');
+
+// LA Result Data Management
+$routes->get('/data-tabel-la-result', 'AssessmentController::dataTabelLaResult');
+
+// Senior GM A Result Data Management
+$routes->get('/data-tabel-senior-gma-result', 'AssessmentController::dataTabelSeniorGmAResult');
+
+// Score Proportion Data Management
+$routes->get('/data-tabel-score-proportion', 'AssessmentController::dataTabelScoreProportion');
+$routes->post('/add-score-proportion', 'AssessmentController::addScoreProportion');
+$routes->post('/edit-score-proportion', 'AssessmentController::editScoreProportion');
+$routes->post('/delete-score-proportion', 'AssessmentController::deleteScoreProportion');
+
+// Final Result Data Management
+$routes->get('/detail-final-result', 'AssessmentController::detailFinalResult');
+$routes->get('/data-tabel-final-result', 'AssessmentController::dataTabelFinalResult');
 
 // Leader
 $routes->get('/data-tabel-subordinate', 'AssessmentController::dataTabelSubordinate');

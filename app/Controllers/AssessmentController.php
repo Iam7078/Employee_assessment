@@ -10,6 +10,7 @@ use App\Models\EmployeeModel;
 
 use App\Models\LeaderAssessmentDetailModel;
 use App\Models\LeaderAssessmentModel;
+use App\Models\ScoreProportionModel;
 use App\Models\SelfAssessmentDetailModel;
 use App\Models\SelfAssessmentModel;
 use App\Models\SeniorGmAssessmentDetailModel;
@@ -45,6 +46,16 @@ class AssessmentController extends BaseController
             return view('data_department_targets');
         } elseif ($segment === 'dTarLe') {
             return view('data_department_leader');
+        } elseif ($segment === 'dReSel') {
+            return view('data_result_self');
+        } elseif ($segment === 'dReLea') {
+            return view('data_result_leader');
+        } elseif ($segment === 'dReSen') {
+            return view('data_result_senior_gm');
+        } elseif ($segment === 'dScPr') {
+            return view('data_score_proportion');
+        } elseif ($segment === 'dFinRe') {
+            return view('data_result_final');
         } elseif ($segment === 'aSel') {
             return $this->getDataSelfAssessment();
         } elseif ($segment === 'aLea') {
@@ -870,6 +881,88 @@ class AssessmentController extends BaseController
     }
 
 
+    // SA Result Management Data
+    public function dataTabelSaResult()
+    {
+        $year = date('Y');
+        $employeeModel = new EmployeeModel();
+        $selfResultModel = new SelfAssessmentModel();
+
+        $dataEmployee = $employeeModel->findAll();
+
+        $data = [];
+        $dataEmployee = array_reverse($dataEmployee);
+        foreach ($dataEmployee as $item) {
+            $dataNilai = $selfResultModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
+            $finalGrades = isset($dataNilai['final_grades']) ? $dataNilai['final_grades'] : 0;
+            $data[] = [
+                'id' => $item['id'],
+                'employee_name' => $item['employee_name'],
+                'employee_id' => $item['employee_id'],
+                'department' => $item['department'],
+                'unit' => $item['unit'],
+                'direct_leader' => $item['direct_leader'],
+                'final_grades' => $finalGrades
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
+    }
+
+    // LA Result Management Data
+    public function dataTabelLaResult()
+    {
+        $year = date('Y');
+        $employeeModel = new EmployeeModel();
+        $leaderResultModel = new LeaderAssessmentModel();
+
+        $dataEmployee = $employeeModel->findAll();
+
+        $data = [];
+        $dataEmployee = array_reverse($dataEmployee);
+        foreach ($dataEmployee as $item) {
+            $dataNilai = $leaderResultModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
+            $finalGrades = isset($dataNilai['final_grades']) ? $dataNilai['final_grades'] : 0;
+            $data[] = [
+                'id' => $item['id'],
+                'employee_name' => $item['employee_name'],
+                'employee_id' => $item['employee_id'],
+                'department' => $item['department'],
+                'unit' => $item['unit'],
+                'direct_leader' => $item['direct_leader'],
+                'final_grades' => $finalGrades
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
+    }
+
+    // Senior GM A Result Management Data
+    public function dataTabelSeniorGmAResult()
+    {
+        $year = date('Y');
+        $employeeModel = new EmployeeModel();
+        $seniorGmResultModel = new SeniorGmAssessmentModel();
+
+        $dataEmployee = $employeeModel->findAll();
+
+        $data = [];
+        $dataEmployee = array_reverse($dataEmployee);
+        foreach ($dataEmployee as $item) {
+            $dataNilai = $seniorGmResultModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
+            $finalGrades = isset($dataNilai['final_grades']) ? $dataNilai['final_grades'] : 0;
+            $data[] = [
+                'id' => $item['id'],
+                'employee_name' => $item['employee_name'],
+                'employee_id' => $item['employee_id'],
+                'department' => $item['department'],
+                'unit' => $item['unit'],
+                'direct_leader' => $item['direct_leader'],
+                'final_grades' => $finalGrades
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
+    }
+
+
     // Leader
     public function dataTabelSubordinate()
     {
@@ -1145,8 +1238,8 @@ class AssessmentController extends BaseController
         $categoryModel = new AssessmentCategoryModel();
         $departmentModel = new AssessmentDepartmentTargetModel();
         $leaderAssessmentModel = new LeaderAssessmentModel();
-        
-        
+
+
         $maxWeight = $categoryModel->getWeightByLastStatus($year);
 
         $dataEmployee = $employeeModel->where('direct_leader', session('userName'))->findAll();
@@ -1156,7 +1249,7 @@ class AssessmentController extends BaseController
         foreach ($dataEmployee as $item) {
             $totalWeight = $departmentModel->cekTotalWeight($year, $item['employee_id']);
             $cekLeaderAssess = $leaderAssessmentModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
-            
+
             $userStatusCol = 'red';
             $userStatusText = 'Unassessed';
 
@@ -1308,7 +1401,7 @@ class AssessmentController extends BaseController
         $categoryModel = new AssessmentCategoryModel();
         $departmentModel = new AssessmentDepartmentTargetModel();
         $seniorGmAssessmentModel = new SeniorGmAssessmentModel();
-        
+
         $maxWeight = $categoryModel->getWeightByLastStatus($year);
 
         $dataEmployee = $employeeModel->findAll();
@@ -1318,7 +1411,7 @@ class AssessmentController extends BaseController
         foreach ($dataEmployee as $item) {
             $totalWeight = $departmentModel->cekTotalWeight($year, $item['employee_id']);
             $cekLeaderAssess = $seniorGmAssessmentModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
-            
+
             $userStatusCol = 'red';
             $userStatusText = 'Unassessed';
 
@@ -1458,6 +1551,154 @@ class AssessmentController extends BaseController
         } else {
             return $this->response->setJSON(['success' => false, 'message' => 'Failed to assess']);
         }
+    }
+
+
+    // Score Proportion Management Data
+    public function dataTabelScoreProportion()
+    {
+        $scoreProportionModel = new ScoreProportionModel();
+
+        $dataScoreProportion = $scoreProportionModel->findAll();
+
+        $data = [];
+        $dataScoreProportion = array_reverse($dataScoreProportion);
+        foreach ($dataScoreProportion as $item) {
+            $data[] = [
+                'id' => $item['id'],
+                'year' => $item['year'],
+                'self' => $item['self'],
+                'leader' => $item['leader'],
+                'senior_gm' => $item['senior_gm']
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
+    }
+    public function addScoreProportion()
+    {
+        $year = date('Y');
+        $request = $this->request->getJSON();
+        $scoreProportionModel = new ScoreProportionModel();
+
+        $cekDataScore = $scoreProportionModel->where('year', $year)->first();
+
+        if ($cekDataScore) {
+            $errorMessage = "Proportion of Year score : $year, existing";
+            return $this->response->setJSON(['success' => false, 'message' => $errorMessage]);
+        }
+
+        $data = [
+            'self' => $request->self,
+            'leader' => $request->leader,
+            'senior_gm' => $request->senior_gm
+        ];
+
+        if ($scoreProportionModel->insert($data)) {
+            return $this->response->setJSON(['success' => true]);
+        } else {
+            return $this->response->setJSON(['success' => false, 'message' => 'Failed to save data']);
+        }
+    }
+    public function editScoreProportion()
+    {
+        $request = $this->request->getJSON();
+        $scoreProportionModel = new ScoreProportionModel();
+
+        $data = [
+            'self' => $request->self,
+            'leader' => $request->leader,
+            'senior_gm' => $request->senior_gm
+        ];
+
+        $updated = $scoreProportionModel->update($request->id, $data);
+
+        if ($updated) {
+            return $this->response->setJSON(['success' => true, 'message' => 'Data changed successfully']);
+        } else {
+            return $this->response->setJSON(['success' => false, 'message' => 'Data changed failed']);
+        }
+    }
+    public function deleteScoreProportion()
+    {
+        $request = $this->request->getJSON();
+
+        $scoreProportionModel = new ScoreProportionModel();
+        $deleted = $scoreProportionModel->delete($request->id);
+
+        if ($deleted) {
+            return $this->response->setJSON(['success' => true, 'message' => 'Data deleted successfully']);
+        } else {
+            return $this->response->setJSON(['success' => false, 'message' => 'Data failed to delete']);
+        }
+    }
+
+
+    // Final Result Management Data
+    public function detailFinalResult()
+    {
+        $year = $this->request->getGet('year');
+
+        $data['year'] = $year;
+
+        return view('data_result_final_detail', $data);
+    }
+    public function dataTabelFinalResult()
+    {
+        $year = $this->request->getGet('year');
+        $employeeModel = new EmployeeModel();
+        $selfResultModel = new SelfAssessmentModel();
+        $leaderResultModel = new LeaderAssessmentModel();
+        $seniorResultModel = new SeniorGmAssessmentModel();
+        $scoreProportionModel = new ScoreProportionModel();
+
+        $dataEmployee = $employeeModel->findAll();
+        $dataScore = $scoreProportionModel->where('year', $year)->first();
+
+        $data = [];
+        $dataEmployee = array_reverse($dataEmployee);
+        foreach ($dataEmployee as $item) {
+            $cekSelf = $selfResultModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
+            $cekLeader = $leaderResultModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
+            $cekSenior = $seniorResultModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
+
+            $resultSelf = isset($cekSelf['final_grades']) ? $cekSelf['final_grades'] : 0;
+            $resultLeader = isset($cekLeader['final_grades']) ? $cekLeader['final_grades'] : 0;
+            $resultSenior = isset($cekSenior['final_grades']) ? $cekSenior['final_grades'] : 0;
+
+            $finalResult = ((($resultSelf * $dataScore['self']) / 100) + (($resultLeader * $dataScore['leader']) / 100) + (($resultSenior * $dataScore['senior_gm']) / 100));
+
+            $finalResult = number_format($finalResult, 2);
+
+            $grade = '-';
+
+            if ($finalResult) {
+                if ($finalResult >= 81 && $finalResult <= 100) {
+                    $grade = 'A';
+                } elseif ($finalResult >= 61 && $finalResult <= 80) {
+                    $grade = 'B';
+                } elseif ($finalResult >= 41 && $finalResult <= 60) {
+                    $grade = 'C';
+                } elseif ($finalResult >= 21 && $finalResult <= 40) {
+                    $grade = 'D';
+                } elseif ($finalResult >= 0 && $finalResult <= 20) {
+                    $grade = 'E';
+                }
+            }
+
+            $data[] = [
+                'employee_name' => $item['employee_name'],
+                'employee_id' => $item['employee_id'],
+                'department' => $item['department'],
+                'unit' => $item['unit'],
+                'direct_leader' => $item['direct_leader'],
+                'self' => $resultSelf,
+                'leader' => $resultLeader,
+                'senior_gm' => $resultSenior,
+                'final_result' => $finalResult,
+                'grades' => $grade
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
     }
 
 
