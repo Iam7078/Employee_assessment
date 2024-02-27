@@ -95,3 +95,16 @@ $routes->get('/detail-senior-assess', 'AssessmentController::detailSeniorAssessm
 $routes->get('/data-tabel-senior-assessment', 'AssessmentController::dataTabelSeniorGmAssessment');
 $routes->post('/cek-id-senior-result', 'AssessmentController::cekIdSeniorResult');
 $routes->post('/add-senior-result', 'AssessmentController::addSeniorResult');
+
+
+
+// Report Self Assessment
+$routes->get('/data-tabel-report-self', 'AssessmentController::dataTabelReportSelf');
+
+// Report Leader Assessment
+$routes->get('/data-tabel-report-leader', 'AssessmentController::dataTabelReportLeader');
+$routes->get('/data-tabel-report-leader-detail', 'AssessmentController::dataReportLeaderDetail');
+
+// Report Senior Assessment
+$routes->get('/data-tabel-report-senior', 'AssessmentController::dataTabelReportSenior');
+$routes->get('/data-tabel-report-senior-detail', 'AssessmentController::dataReportSeniorDetail');

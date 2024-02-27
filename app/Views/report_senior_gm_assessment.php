@@ -8,7 +8,7 @@
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
                         <div class="title">
-                            <h4>Self Assessment</h4>
+                            <h4>Senior GM Assessment</h4>
                         </div>
                         <nav aria-label="breadcrumb" role="navigation">
                             <ol class="breadcrumb">
@@ -16,7 +16,7 @@
                                     <a>Report</a>
                                 </li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    Self Assessment
+                                    Senior GM Assessment
                                 </li>
                             </ol>
                         </nav>
@@ -25,7 +25,7 @@
             </div>
             <div class="pd-20 card-box mb-30">
                 <div class="clearfix mb-30 text-center align-items-center">
-                    <h4 class="text-black h3">TIMW Employee Self-Assessment Report
+                    <h4 class="text-black h3">TIMW Employee Senior General Manager Assessment Results
                     </h4>
                 </div>
                 <div class="table-responsive">
@@ -62,7 +62,7 @@
                                     </td>
                                     <td>
                                         <a class="btn btn-link font-30 p-0 line-height-1 no-arrow"
-                                            href="/Em/rSelDe?year=<?= $value['year']; ?>">
+                                            href="/Em/rSenTa?year=<?= $value['year']; ?>">
                                             <i class="icon-copy fa fa-eye mr-2"></i>Details
                                         </a>
                                     </td>
@@ -79,7 +79,7 @@
 
 <script>
     function toggleClasses() {
-        var iaElements = document.querySelectorAll('.RSA');
+        var iaElements = document.querySelectorAll('.RSG');
         iaElements.forEach(function (element) {
             element.classList.toggle('active');
         });

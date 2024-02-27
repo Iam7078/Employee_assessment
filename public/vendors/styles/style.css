@@ -5279,3 +5279,54 @@ Style Tambahan
     align-items: center;
     text-align: center;
 }
+
+.tabel-assessment-leader th:nth-child(1),
+.tabel-assessment-leader td:nth-child(1) {
+    width: 250px !important;
+}
+
+.tabel-assessment-leader th:nth-child(3),
+.tabel-assessment-leader td:nth-child(3),
+.tabel-assessment-leader th:nth-child(4),
+.tabel-assessment-leader td:nth-child(4),
+.tabel-assessment-leader th:nth-child(5),
+.tabel-assessment-leader td:nth-child(5) {
+    width: 100px !important;
+    align-items: center;
+    text-align: center;
+}
+
+.tabel-assessment-senior th:nth-child(1),
+.tabel-assessment-senior td:nth-child(1) {
+    width: 250px !important;
+}
+
+.tabel-assessment-senior th:nth-child(3),
+.tabel-assessment-senior td:nth-child(3),
+.tabel-assessment-senior th:nth-child(4),
+.tabel-assessment-senior td:nth-child(4),
+.tabel-assessment-senior th:nth-child(5),
+.tabel-assessment-senior td:nth-child(5),
+.tabel-assessment-senior th:nth-child(6),
+.tabel-assessment-senior td:nth-child(6) {
+    width: 100px !important;
+    align-items: center;
+    text-align: center;
+}
+
+.tabel-senior-report th:nth-child(1),
+.tabel-senior-report td:nth-child(1),
+.tabel-senior-report th:nth-child(5),
+.tabel-senior-report td:nth-child(5),
+.tabel-senior-report th:nth-child(6),
+.tabel-senior-report td:nth-child(6),
+.tabel-senior-report th:nth-child(7),
+.tabel-senior-report td:nth-child(7),
+.tabel-senior-report th:nth-child(8),
+.tabel-senior-report td:nth-child(8),
+.tabel-senior-report th:nth-child(9),
+.tabel-senior-report td:nth-child(9) {
+    width: 70px !important;
+    align-items: center;
+    text-align: center;
+}

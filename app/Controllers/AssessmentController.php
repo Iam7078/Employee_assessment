@@ -63,60 +63,22 @@ class AssessmentController extends BaseController
         } elseif ($segment === 'aSen') {
             return view('assess_senior_gm_assessment');
         } elseif ($segment === 'rSel') {
+            return $this->getDataAllReportSelf();
+        } elseif ($segment === 'rSelDe') {
             return $this->getDataReportSelf();
+        } elseif ($segment === 'rLea') {
+            return $this->getDataAllReportLeader();
+        } elseif ($segment === 'rLeaTa') {
+            return $this->getDataReportLeader();
+        } elseif ($segment === 'rLeaDe') {
+            return $this->getDataReportLeaderDetail();
+        } elseif ($segment === 'rSen') {
+            return $this->getDataAllReportSenior();
+        } elseif ($segment === 'rSenTa') {
+            return $this->getDataReportSenior();
+        } elseif ($segment === 'rSenDe') {
+            return $this->getDataReportSeniorDetail();
         }
-
-
-        //elseif ($segment === 'dPar') {
-        //     return $this->getDataParameter($data);
-        // } elseif ($segment === 'dTar') {
-        //     return $this->getDataTargetParameter($data);
-        // } elseif ($segment === 'dSelAs') {
-        //     return $this->getDataSelfAsse($data);
-        // } elseif ($segment === 'dSubAs') {
-        //     return $this->getDataSubAsse($data);
-        // } elseif ($segment === 'dSenAs') {
-        //     return $this->getDataSenAsse($data);
-        // } elseif ($segment === 'dFinRe') {
-        //     return $this->getDataFinalAsse($data);
-        // } elseif ($segment === 'dFinReDe') {
-        //     return $this->getDataFinalAsseDet($data);
-        // } elseif ($segment === 'dValCal') {
-        //     return $this->getDataValueCalculation($data);
-        // } elseif ($segment === 'dCat') {
-        //     return $this->getDataCategory($data);
-        // } elseif ($segment === 'aSel') {
-        //     return $this->getDataSelfAssessment($data);
-        // } elseif ($segment === 'aSub') {
-        //     return $this->getDataSubordinate($data);
-        // } elseif ($segment === 'aSubAss') {
-        //     return $this->getDataSubordinateAssessment($data);
-        // } elseif ($segment === 'aEmp') {
-        //     return $this->getDataEmployeeAssessment($data);
-        // } elseif ($segment === 'aEmpAss') {
-        //     return $this->getDataEmployeeAssessmentDetail($data);
-        // } elseif ($segment === 'rSel') {
-        //     return $this->getReportDataSelfAssessment($data);
-        // } elseif ($segment === 'rSelDet') {
-        //     return $this->getReportDataSelfAssessmentDet($data);
-        // } elseif ($segment === 'rSub') {
-        //     return $this->getDataReportSubordinate($data);
-        // } elseif ($segment === 'rSubTah') {
-        //     return $this->getDataReportSubordinateTahun($data);
-        // } elseif ($segment === 'rSubDet') {
-        //     return $this->getDataReportSubordinateDetail($data);
-        // } elseif ($segment === 'rEmp') {
-        //     return $this->getDataReportEmployee($data);
-        // } elseif ($segment === 'rSenPri') {
-        //     return $this->getDataReportEmployeePrint($data);
-        // } elseif ($segment === 'rEmpDe') {
-        //     return $this->getDataReportEmployeeDe($data);
-        // } elseif ($segment === 'rEmpDet') {
-        //     return $this->getDataReportEmployeeDetail($data);
-        // } elseif ($segment == 'prof') {
-        //     return $this->getDataProfile($data);
-        // }
-
     }
     public function employe()
     {
@@ -1704,15 +1666,323 @@ class AssessmentController extends BaseController
 
 
 
-    // Report
-    public function getDataReportSelf()
+    // Report Self
+    public function getDataAllReportSelf()
     {
-        $year = date('Y');
-        $categoryModel = new AssessmentCategoryModel();
-        $data['year'] = $year;
-        $data['category'] = $categoryModel->where('year', $year)->findAll();
+        $selfModel = new ScoreProportionModel();
+
+        $data['value'] = $selfModel->findAll();
 
         return view('report_self_assessment', $data);
+    }
+    public function getDataReportSelf()
+    {
+        $year = $this->request->getGet('year');
+        $categoryModel = new AssessmentCategoryModel();
+        $employeeModel = new EmployeeModel();
+        $selfModel = new SelfAssessmentModel();
+
+        $data['year'] = $year;
+        $data['category'] = $categoryModel->where('year', $year)->findAll();
+        $data['detail'] = $employeeModel->where('employee_id', session('userId'))->first();
+        $data['self'] = $selfModel->where('year', $year)->where('employee_id', session('userId'))->first();
+
+        return view('report_self_assessment_detail', $data);
+    }
+    public function dataTabelReportSelf()
+    {
+        $year = $this->request->getGet('year');
+        $parameterModel = new AssessmentParametersModel();
+        $departmentTargetModel = new AssessmentDepartmentTargetModel();
+        $selfAssessmentModal = new SelfAssessmentModel();
+        $selfAssessmentDetailModal = new SelfAssessmentDetailModel();
+
+        $dataParameter = $parameterModel->where('year', $year)->findAll();
+        $dataDepartment = $departmentTargetModel->where('year', $year)->where('employee_id', session('userId'))->findAll();
+
+        $data = [];
+        foreach ($dataParameter as $item) {
+            $dataValue = $selfAssessmentDetailModal->where('year', $year)->where('employee_id', session('userId'))->where('status', $item['status'])->where('status_detail', $item['status_detail'])->first();
+            $value = isset($dataValue['value']) ? $dataValue['value'] : 0;
+            $data[] = [
+                'status' => $item['status'],
+                'status_detail' => $item['status_detail'],
+                'parameter' => $item['parameter'],
+                'remark' => $item['remark'],
+                'weight' => $item['weight'],
+                'value' => $value
+            ];
+        }
+        foreach ($dataDepartment as $item) {
+            $dataValue = $selfAssessmentDetailModal->where('year', $year)->where('employee_id', session('userId'))->where('status', $item['status'])->where('status_detail', $item['status_detail'])->first();
+            $value = isset($dataValue['value']) ? $dataValue['value'] : 0;
+            $data[] = [
+                'status' => $item['status'],
+                'status_detail' => $item['status_detail'],
+                'parameter' => $item['parameter'],
+                'remark' => $item['remark'],
+                'weight' => $item['weight'],
+                'value' => $value
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
+    }
+
+    // Report Subordinate
+    public function getDataAllReportLeader()
+    {
+        $selfModel = new ScoreProportionModel();
+
+        $data['value'] = $selfModel->findAll();
+
+        return view('report_leader_assessment', $data);
+    }
+    public function getDataReportLeader()
+    {
+        $year = $this->request->getGet('year');
+
+        $data['year'] = $year;
+
+        return view('report_leader_assessment_year', $data);
+    }
+    public function dataTabelReportLeader()
+    {
+        $year = $this->request->getGet('year');
+        $employeeModel = new EmployeeModel();
+        $selfModel = new SelfAssessmentModel();
+        $leaderModel = new LeaderAssessmentModel();
+
+        $dataEmployee = $employeeModel->where('direct_leader', session('userName'))->findAll();
+
+        $data = [];
+        $dataEmployee = array_reverse($dataEmployee);
+        foreach ($dataEmployee as $item) {
+            $dataSelf = $selfModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
+            $dataLeader = $leaderModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
+
+            $valueSelf = isset($dataSelf['final_grades']) ? $dataSelf['final_grades'] : 0;
+            $valueLeader = isset($dataLeader['final_grades']) ? $dataLeader['final_grades'] : 0;
+            $data[] = [
+                'id' => $item['id'],
+                'employee_name' => $item['employee_name'],
+                'employee_id' => $item['employee_id'],
+                'department' => $item['department'],
+                'unit' => $item['unit'],
+                'self' => $valueSelf,
+                'leader' => $valueLeader
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
+    }
+    public function getDataReportLeaderdetail()
+    {
+        $year = $this->request->getGet('year');
+        $employee_id = $this->request->getGet('employee_id');
+        $categoryModel = new AssessmentCategoryModel();
+        $employeeModel = new EmployeeModel();
+        $selfModel = new SelfAssessmentModel();
+        $leaderModel = new LeaderAssessmentModel();
+
+        $data['year'] = $year;
+        $data['category'] = $categoryModel->where('year', $year)->findAll();
+        $data['detail'] = $employeeModel->where('employee_id', $employee_id)->first();
+        $data['self'] = $selfModel->where('year', $year)->where('employee_id', $employee_id)->first();
+        $data['leader'] = $leaderModel->where('year', $year)->where('employee_id', $employee_id)->first();
+
+        return view('report_leader_assessment_detail', $data);
+    }
+    public function dataReportLeaderDetail()
+    {
+        $year = $this->request->getGet('year');
+        $employee_id = $this->request->getGet('employee_id');
+        $parameterModel = new AssessmentParametersModel();
+        $departmentTargetModel = new AssessmentDepartmentTargetModel();
+        $selfAssessmentDetailModal = new SelfAssessmentDetailModel();
+        $leaderAssessmentModal = new LeaderAssessmentDetailModel();
+
+        $dataParameter = $parameterModel->where('year', $year)->findAll();
+        $dataDepartment = $departmentTargetModel->where('year', $year)->where('employee_id', $employee_id)->findAll();
+
+        $data = [];
+        foreach ($dataParameter as $item) {
+            $dataSelf = $selfAssessmentDetailModal->where('year', $year)->where('employee_id', $employee_id)->where('status', $item['status'])->where('status_detail', $item['status_detail'])->first();
+            $valueSelf = isset($dataSelf['value']) ? $dataSelf['value'] : 0;
+            $dataLeader = $leaderAssessmentModal->where('year', $year)->where('employee_id', $employee_id)->where('status', $item['status'])->where('status_detail', $item['status_detail'])->first();
+            $valueLeader = isset($dataLeader['value']) ? $dataLeader['value'] : 0;
+            $data[] = [
+                'status' => $item['status'],
+                'status_detail' => $item['status_detail'],
+                'parameter' => $item['parameter'],
+                'remark' => $item['remark'],
+                'weight' => $item['weight'],
+                'value' => $valueSelf,
+                'leader' => $valueLeader
+            ];
+        }
+        foreach ($dataDepartment as $item) {
+            $dataSelf = $selfAssessmentDetailModal->where('year', $year)->where('employee_id', $employee_id)->where('status', $item['status'])->where('status_detail', $item['status_detail'])->first();
+            $valueSelf = isset($dataSelf['value']) ? $dataSelf['value'] : 0;
+            $dataLeader = $leaderAssessmentModal->where('year', $year)->where('employee_id', $employee_id)->where('status', $item['status'])->where('status_detail', $item['status_detail'])->first();
+            $valueLeader = isset($dataLeader['value']) ? $dataLeader['value'] : 0;
+            $data[] = [
+                'status' => $item['status'],
+                'status_detail' => $item['status_detail'],
+                'parameter' => $item['parameter'],
+                'remark' => $item['remark'],
+                'weight' => $item['weight'],
+                'value' => $valueSelf,
+                'leader' => $valueLeader
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
+    }
+
+
+    // Report Senior GM Assessment
+    public function getDataAllReportSenior()
+    {
+        $selfModel = new ScoreProportionModel();
+
+        $data['value'] = $selfModel->findAll();
+
+        return view('report_senior_gm_assessment', $data);
+    }
+    public function getDataReportSenior()
+    {
+        $year = $this->request->getGet('year');
+
+        $data['year'] = $year;
+
+        return view('report_senior_gm_assessment_year', $data);
+    }
+    public function dataTabelReportSenior()
+    {
+        $year = $this->request->getGet('year');
+        $employeeModel = new EmployeeModel();
+        $selfModel = new SelfAssessmentModel();
+        $leaderModel = new LeaderAssessmentModel();
+        $seniorModel = new SeniorGmAssessmentModel();
+        $scoreProportionModel = new ScoreProportionModel();
+
+        $dataEmployee = $employeeModel->findAll();
+        $dataScore = $scoreProportionModel->where('year', $year)->first();
+
+        $data = [];
+        $dataEmployee = array_reverse($dataEmployee);
+        foreach ($dataEmployee as $item) {
+            $dataSelf = $selfModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
+            $dataLeader = $leaderModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
+            $dataSenior = $seniorModel->where('year', $year)->where('employee_id', $item['employee_id'])->first();
+
+            $valueSelf = isset($dataSelf['final_grades']) ? $dataSelf['final_grades'] : 0;
+            $valueLeader = isset($dataLeader['final_grades']) ? $dataLeader['final_grades'] : 0;
+            $valueSenior = isset($dataSenior['final_grades']) ? $dataSenior['final_grades'] : 0;
+
+            $finalResult = ((($valueSelf * $dataScore['self']) / 100) + (($valueLeader * $dataScore['leader']) / 100) + (($valueSenior * $dataScore['senior_gm']) / 100));
+
+            $finalResult = number_format($finalResult, 2);
+
+            $grade = '-';
+
+            if ($finalResult) {
+                if ($finalResult >= 81 && $finalResult <= 100) {
+                    $grade = 'A';
+                } elseif ($finalResult >= 61 && $finalResult <= 80) {
+                    $grade = 'B';
+                } elseif ($finalResult >= 41 && $finalResult <= 60) {
+                    $grade = 'C';
+                } elseif ($finalResult >= 21 && $finalResult <= 40) {
+                    $grade = 'D';
+                } elseif ($finalResult >= 0 && $finalResult <= 20) {
+                    $grade = 'E';
+                }
+            }
+            $data[] = [
+                'id' => $item['id'],
+                'employee_name' => $item['employee_name'],
+                'employee_id' => $item['employee_id'],
+                'department' => $item['department'],
+                'unit' => $item['unit'],
+                'self' => $valueSelf,
+                'leader' => $valueLeader,
+                'senior' => $valueSenior,
+                'final' => $finalResult,
+                'grade' => $grade
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
+    }
+
+    public function getDataReportSeniordetail()
+    {
+        $year = $this->request->getGet('year');
+        $employee_id = $this->request->getGet('employee_id');
+        $categoryModel = new AssessmentCategoryModel();
+        $employeeModel = new EmployeeModel();
+        $selfModel = new SelfAssessmentModel();
+        $leaderModel = new LeaderAssessmentModel();
+        $seniorModel = new SeniorGmAssessmentModel();
+
+        $data['year'] = $year;
+        $data['category'] = $categoryModel->where('year', $year)->findAll();
+        $data['detail'] = $employeeModel->where('employee_id', $employee_id)->first();
+        $data['self'] = $selfModel->where('year', $year)->where('employee_id', $employee_id)->first();
+        $data['leader'] = $leaderModel->where('year', $year)->where('employee_id', $employee_id)->first();
+        $data['senior'] = $seniorModel->where('year', $year)->where('employee_id', $employee_id)->first();
+
+        return view('report_senior_gm_assessment_detail', $data);
+    }
+    public function dataReportSeniorDetail()
+    {
+        $year = $this->request->getGet('year');
+        $employee_id = $this->request->getGet('employee_id');
+        $parameterModel = new AssessmentParametersModel();
+        $departmentTargetModel = new AssessmentDepartmentTargetModel();
+        $selfAssessmentDetailModal = new SelfAssessmentDetailModel();
+        $leaderAssessmentModal = new LeaderAssessmentDetailModel();
+        $seniorAssessmentModal = new SeniorGmAssessmentDetailModel();
+
+        $dataParameter = $parameterModel->where('year', $year)->findAll();
+        $dataDepartment = $departmentTargetModel->where('year', $year)->where('employee_id', $employee_id)->findAll();
+
+        $data = [];
+        foreach ($dataParameter as $item) {
+            $dataSelf = $selfAssessmentDetailModal->where('year', $year)->where('employee_id', $employee_id)->where('status', $item['status'])->where('status_detail', $item['status_detail'])->first();
+            $valueSelf = isset($dataSelf['value']) ? $dataSelf['value'] : 0;
+            $dataLeader = $leaderAssessmentModal->where('year', $year)->where('employee_id', $employee_id)->where('status', $item['status'])->where('status_detail', $item['status_detail'])->first();
+            $valueLeader = isset($dataLeader['value']) ? $dataLeader['value'] : 0;
+            $dataSenior = $seniorAssessmentModal->where('year', $year)->where('employee_id', $employee_id)->where('status', $item['status'])->where('status_detail', $item['status_detail'])->first();
+            $valueSenior = isset($dataSenior['value']) ? $dataSenior['value'] : 0;
+            $data[] = [
+                'status' => $item['status'],
+                'status_detail' => $item['status_detail'],
+                'parameter' => $item['parameter'],
+                'remark' => $item['remark'],
+                'weight' => $item['weight'],
+                'value' => $valueSelf,
+                'leader' => $valueLeader,
+                'senior' => $valueSenior
+            ];
+        }
+        foreach ($dataDepartment as $item) {
+            $dataSelf = $selfAssessmentDetailModal->where('year', $year)->where('employee_id', $employee_id)->where('status', $item['status'])->where('status_detail', $item['status_detail'])->first();
+            $valueSelf = isset($dataSelf['value']) ? $dataSelf['value'] : 0;
+            $dataLeader = $leaderAssessmentModal->where('year', $year)->where('employee_id', $employee_id)->where('status', $item['status'])->where('status_detail', $item['status_detail'])->first();
+            $valueLeader = isset($dataLeader['value']) ? $dataLeader['value'] : 0;
+            $dataSenior = $seniorAssessmentModal->where('year', $year)->where('employee_id', $employee_id)->where('status', $item['status'])->where('status_detail', $item['status_detail'])->first();
+            $valueSenior = isset($dataSenior['value']) ? $dataSenior['value'] : 0;
+            $data[] = [
+                'status' => $item['status'],
+                'status_detail' => $item['status_detail'],
+                'parameter' => $item['parameter'],
+                'remark' => $item['remark'],
+                'weight' => $item['weight'],
+                'value' => $valueSelf,
+                'leader' => $valueLeader,
+                'senior' => $valueSenior
+            ];
+        }
+        return $this->response->setJSON(['data' => $data]);
     }
 
 }
