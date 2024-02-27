@@ -157,6 +157,7 @@ class AssessmentController extends BaseController
         $totalDataLeader = $leaderAssess->getTotalDataLeader($currentYear);
         $totalDataSeniorGm = $seniorGmAssess->getTotalDataSenior($currentYear);
 
+        $data['year'] = $currentYear;
         $data['totalEmployee'] = $totalDataCount;
         $data['totalSelf'] = $totalDataSelf;
         $data['totalLeader'] = $totalDataLeader;
@@ -191,7 +192,7 @@ class AssessmentController extends BaseController
         if($passNow !== $request->old_password){
             return $this->response->setJSON(['success' => false, 'message' => 'Passwords are not the same']);
         }
-        
+
         $data = [
             'password' => $request->password
         ];
