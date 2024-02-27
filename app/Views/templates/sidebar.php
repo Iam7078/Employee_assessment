@@ -28,7 +28,7 @@
                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                        <a class="dropdown-item" href="/Em/prof"><i class="dw dw-user1"></i> Profile</a>
+                        <a class="dropdown-item" href="/Em/profil"><i class="dw dw-user1"></i> Profile</a>
                         <a class="dropdown-item" href="/logout-user"><i class="dw dw-logout"></i> Log Out</a>
                     </div>
                 </div>

@@ -34,6 +34,8 @@ class AssessmentController extends BaseController
             return view('auth/login');
         } elseif ($segment === 'dash') {
             return $this->getDataDash();
+        } elseif ($segment === 'profil') {
+            return $this->getDataProfil();
         } elseif ($segment === 'dEm') {
             return view('data_employee');
         } elseif ($segment === 'dAcc') {
@@ -106,6 +108,7 @@ class AssessmentController extends BaseController
             if ($user && $password === $user['password']) {
                 session()->set([
                     'isLoggedIn' => true,
+                    'userKey' => $user['id'],
                     'userId' => $user['user_id'],
                     'userRole' => $user['role'],
                     'userName' => $user['user_name'],
@@ -163,6 +166,44 @@ class AssessmentController extends BaseController
     }
     // Doneee
 
+
+    // Profil
+    public function getDataProfil()
+    {
+        $year = date('Y');
+        $employeeModel = new EmployeeModel();
+        $categoryModel = new AssessmentCategoryModel();
+        $departmentModel = new AssessmentDepartmentTargetModel();
+
+        $statusCek = $categoryModel->getNomorStatus($year);
+        $data['detail'] = $employeeModel->where('employee_id', session('userId'))->first();
+        $data['target'] = $departmentModel->where('status', $statusCek)->where('employee_id', session('userId'))->findAll();
+        
+        return view('profil', $data);
+    }
+    public function editPassword()
+    {
+        $request = $this->request->getJSON();
+        $itemModel = new AccountModel();
+        $cekPass = $itemModel->where('id', $request->id)->first();
+        $passNow = $cekPass['password'];
+
+        if($passNow !== $request->old_password){
+            return $this->response->setJSON(['success' => false, 'message' => 'Passwords are not the same']);
+        }
+        
+        $data = [
+            'password' => $request->password
+        ];
+
+        $updated = $itemModel->update($request->id, $data);
+
+        if ($updated) {
+            return $this->response->setJSON(['success' => true, 'message' => 'Data changed successfully']);
+        } else {
+            return $this->response->setJSON(['success' => false, 'message' => 'Data changed failed']);
+        }
+    }
 
 
     // Employee Data Management
@@ -658,6 +699,7 @@ class AssessmentController extends BaseController
         $dataDepartmentTarget = $departmentTargetModel->findAll();
 
         $data = [];
+        $dataDepartmentTarget = array_reverse($dataDepartmentTarget);
         foreach ($dataDepartmentTarget as $item) {
             $dataEmployee = $employeeModel->where('employee_id', $item['employee_id'])->first();
             $data[] = [
@@ -796,7 +838,7 @@ class AssessmentController extends BaseController
                     $cekDataEmployee = $employeeModel->where('employee_id', $employee_id)->first();
                     if (!$cekDataEmployee) {
                         $errorMessage = "Employee data with ID : $employee_id, not found";
-                        return $this->response->setJSON(['success' => false, 'message' => $errorMessage]);
+                        return $this->response->setJSON(['success' => false, 'error' => $errorMessage]);
                     }
 
                     if ($departmentTargetModel->isDuplicate($employee_id, $parameter, $remark, $weight)) {

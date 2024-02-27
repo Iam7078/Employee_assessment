@@ -69,7 +69,7 @@
                     <button id="submitBtn" type="button" class="btn btn-primary"
                         data-id="<?php echo session('userId'); ?>" data-count="<?= $totalCategories; ?>"><i class="icon-copy fa fa-check-square"></i>
                         Check</button>
-                    <button id="submitBtn3" type="button" class="btn btn-danger"><i
+                    <button id="submitBtn3" type="button" class="btn btn-danger mr-1"><i
                             class="icon-copy fa fa-minus-square"></i> Cancel</button>
                     <button id="submitBtn2" type="button" class="btn btn-info"><i
                             class="icon-copy fa fa-check-square-o"></i> Submit</button>

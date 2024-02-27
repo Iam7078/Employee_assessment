@@ -222,58 +222,6 @@ $(document).ready(function () {
         });
     });
 
-    // $('#btn-import-excel').on('click', function () {
-    //     var input = document.createElement('input');
-    //     input.type = 'file';
-
-    //     input.onchange = function (e) {
-    //         var file = e.target.files[0];
-    //         if (file) {
-    //             var formData = new FormData();
-    //             formData.append('excelFile', file);
-
-    //             $.ajax({
-    //                 url: '/import-excel-user',
-    //                 type: 'POST',
-    //                 data: formData,
-    //                 processData: false,
-    //                 contentType: false,
-    //                 success: function (response) {
-    //                     if (response.success) {
-    //                         Toast.fire({
-    //                             icon: 'success',
-    //                             title: "Data imported successfully"
-    //                         }).then(() => {
-    //                             getDataAccount();
-    //                         });
-    //                     } else {
-    //                         Toast.fire({
-    //                             icon: 'error',
-    //                             title: 'An error occurred while importing data: ' + response.error
-    //                         });
-    //                     }
-    //                 },
-    //                 error: function (error) {
-    //                     if (error.responseJSON && error.responseJSON.error) {
-    //                         Toast.fire({
-    //                             icon: 'error',
-    //                             title: error.responseJSON.error
-    //                         }).then(() => {
-    //                             getDataAccount();
-    //                         });
-    //                     } else {
-    //                         Toast.fire({
-    //                             icon: 'error',
-    //                             title: "An error occurred while sending data"
-    //                         });
-    //                     }
-    //                 }
-    //             });
-    //         }
-    //     };
-    //     input.click();
-    // });
-
 });
 
 function getDataParameter() {
