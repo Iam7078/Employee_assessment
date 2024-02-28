@@ -8,18 +8,15 @@
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
                         <div class="title">
-                            <h4>Target Data of Subordinate Departments</h4>
+                            <h4>Assessment Parameters</h4>
                         </div>
                         <nav aria-label="breadcrumb" role="navigation">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item">
                                     <a>Data Management</a>
                                 </li>
-                                <li class="breadcrumb-item">
-                                    <a>Assessment Parameters</a>
-                                </li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    Target Data of Subordinate Departments
+                                    Assessment Parameters
                                 </li>
                             </ol>
                         </nav>
