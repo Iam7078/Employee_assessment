@@ -16,6 +16,9 @@ use App\Models\SelfAssessmentModel;
 use App\Models\SeniorGmAssessmentDetailModel;
 use App\Models\SeniorGmAssessmentModel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class AssessmentController extends BaseController
 {
@@ -179,7 +182,7 @@ class AssessmentController extends BaseController
         $statusCek = $categoryModel->getNomorStatus($year);
         $data['detail'] = $employeeModel->where('employee_id', session('userId'))->first();
         $data['target'] = $departmentModel->where('status', $statusCek)->where('employee_id', session('userId'))->findAll();
-        
+
         return view('profil', $data);
     }
     public function editPassword()
@@ -189,7 +192,7 @@ class AssessmentController extends BaseController
         $cekPass = $itemModel->where('id', $request->id)->first();
         $passNow = $cekPass['password'];
 
-        if($passNow !== $request->old_password){
+        if ($passNow !== $request->old_password) {
             return $this->response->setJSON(['success' => false, 'message' => 'Passwords are not the same']);
         }
 
@@ -2027,5 +2030,259 @@ class AssessmentController extends BaseController
         }
         return $this->response->setJSON(['data' => $data]);
     }
+
+
+    // Export Final Result Data
+    public function exportDataFinalResult()
+    {
+        $year = $this->request->getGet('year');
+        $title = "TIMW EMPLOYEE FINAL ASSESSMENT RESULTS $year";
+
+        $scoreModel = new ScoreProportionModel();
+        $employeeModel = new EmployeeModel();
+        $selfModel = new SelfAssessmentModel();
+        $leaderModel = new LeaderAssessmentModel();
+        $seniorModel = new SeniorGmAssessmentModel();
+
+        $dataScore = $scoreModel->where('year', $year)->first();
+        $self = $dataScore['self'];
+        $selfTitle = "SELF $self%";
+        $leader = $dataScore['leader'];
+        $leaderTitle = "LEADER $leader%";
+        $senior = $dataScore['senior_gm'];
+        $seniorTitle = "SENIOR GM $senior%";
+
+        $spreadsheet = new Spreadsheet();
+        $activeWorksheet = $spreadsheet->getActiveSheet();
+        $activeWorksheet->setCellValue('B2', $title);
+        $activeWorksheet->setCellValue('B4', 'NO');
+        $activeWorksheet->setCellValue('C4', 'EMPLOYEE NAME');
+        $activeWorksheet->setCellValue('D4', 'EMPLOYEE ID');
+        $activeWorksheet->setCellValue('E4', 'DEPARTMENT');
+        $activeWorksheet->setCellValue('F4', 'UNIT');
+        $activeWorksheet->setCellValue('G4', 'DIRECT LEADER');
+        $activeWorksheet->setCellValue('H4', 'RESULT');
+        $activeWorksheet->setCellValue('H5', $selfTitle);
+        $activeWorksheet->setCellValue('I5', $leaderTitle);
+        $activeWorksheet->setCellValue('J5', $seniorTitle);
+        $activeWorksheet->setCellValue('K4', 'FINAL RESULT');
+        $activeWorksheet->setCellValue('L4', 'GRADES');
+
+        $alignHeader = 'B2:L5';
+        $stylee = $activeWorksheet->getStyle($alignHeader);
+        $stylee->getAlignment()->setVertical("middle");
+        $stylee->getAlignment()->setHorizontal("center");
+
+        $activeWorksheet->mergeCells('B2:L3');
+        $activeWorksheet->mergeCells('B4:B5');
+        $activeWorksheet->mergeCells('C4:C5');
+        $activeWorksheet->mergeCells('D4:D5');
+        $activeWorksheet->mergeCells('E4:E5');
+        $activeWorksheet->mergeCells('F4:F5');
+        $activeWorksheet->mergeCells('G4:G5');
+        $activeWorksheet->mergeCells('H4:J4');
+        $activeWorksheet->mergeCells('K4:K5');
+        $activeWorksheet->mergeCells('L4:L5');
+
+        $dataEmployee = $employeeModel->findAll();
+        $no = 1;
+        $column = 6;
+        foreach ($dataEmployee as $key => $value) {
+            $activeWorksheet->setCellValue('B' . $column, $no);
+            $activeWorksheet->setCellValue('C' . $column, $value['employee_name']);
+            $activeWorksheet->setCellValue('D' . $column, $value['employee_id']);
+            $activeWorksheet->setCellValue('E' . $column, $value['department']);
+            $activeWorksheet->setCellValue('F' . $column, $value['unit']);
+            $activeWorksheet->setCellValue('G' . $column, $value['direct_leader']);
+
+            $dataSelf = $selfModel->where('year', $year)->where('employee_id', $value['employee_id'])->first();
+            $selfValue = isset($dataSelf['final_grades']) ? $dataSelf['final_grades'] : 0;
+
+            $dataLeader = $leaderModel->where('year', $year)->where('employee_id', $value['employee_id'])->first();
+            $leaderValue = isset($dataLeader['final_grades']) ? $dataLeader['final_grades'] : 0;
+
+            $dataSenior = $seniorModel->where('year', $year)->where('employee_id', $value['employee_id'])->first();
+            $seniorValue = isset($dataSenior['final_grades']) ? $dataSenior['final_grades'] : 0;
+
+            $activeWorksheet->setCellValue('H' . $column, $selfValue);
+            $activeWorksheet->setCellValue('I' . $column, $leaderValue);
+            $activeWorksheet->setCellValue('J' . $column, $seniorValue);
+
+            $finalResult = ((($selfValue * $self) / 100) + (($leaderValue * $leader) / 100) + (($selfValue * $senior) / 100));
+
+            $finalResult = number_format($finalResult, 2);
+
+            $grade = '-';
+
+            if ($finalResult) {
+                if ($finalResult >= 81 && $finalResult <= 100) {
+                    $grade = 'A';
+                } elseif ($finalResult >= 61 && $finalResult <= 80) {
+                    $grade = 'B';
+                } elseif ($finalResult >= 41 && $finalResult <= 60) {
+                    $grade = 'C';
+                } elseif ($finalResult >= 21 && $finalResult <= 40) {
+                    $grade = 'D';
+                } elseif ($finalResult >= 0 && $finalResult <= 20) {
+                    $grade = 'E';
+                }
+            }
+
+            $activeWorksheet->setCellValue('K' . $column, $finalResult);
+            $activeWorksheet->setCellValue('L' . $column, $grade);
+
+            $no++;
+            $column++;
+        }
+
+        $columns = ['B', 'D', 'H', 'I', 'J', 'K', 'L'];
+        foreach ($columns as $col) {
+            $kolom = $col . '6:' . $col . $column;
+            $style = $activeWorksheet->getStyle($kolom);
+            $style->getAlignment()->setHorizontal("center");
+        }
+
+
+        $activeWorksheet->getStyle('B2:L5')->getFont()->setBold(true);
+
+        $styleArray = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ];
+
+        $activeWorksheet->getStyle('B2:L' . ($column - 1))->applyFromArray($styleArray);
+
+        $activeWorksheet->getColumnDimension('B')->setAutoSize(true);
+        $activeWorksheet->getColumnDimension('C')->setAutoSize(true);
+        $activeWorksheet->getColumnDimension('D')->setAutoSize(true);
+        $activeWorksheet->getColumnDimension('E')->setAutoSize(true);
+        $activeWorksheet->getColumnDimension('F')->setAutoSize(true);
+        $activeWorksheet->getColumnDimension('G')->setAutoSize(true);
+        $activeWorksheet->getColumnDimension('H')->setAutoSize(true);
+        $activeWorksheet->getColumnDimension('I')->setAutoSize(true);
+        $activeWorksheet->getColumnDimension('J')->setAutoSize(true);
+        $activeWorksheet->getColumnDimension('K')->setAutoSize(true);
+        $activeWorksheet->getColumnDimension('L')->setAutoSize(true);
+
+        $filename = "Final_Result_" . $year . ".xlsx";
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachnebt;filename=' . $filename);
+        header('cache-Control: max-age=0');
+        $writer->save('php://output');
+        exit();
+    }
+
+    // public function exportDataFinalResult()
+    // {
+    //     $year = $this->request->getGet('year');
+    //     $title = "TIMW EMPLOYEE FINAL ASSESSMENT RESULTS $year";
+
+    //     $categoryModel = new AssessmentCategoryModel();
+    //     $parameterModel = new AssessmentParametersModel();
+    //     $targetDepartmentModel = new AssessmentDepartmentTargetModel();
+
+    //     $spreadsheet = new Spreadsheet();
+    //     $activeWorksheet = $spreadsheet->getActiveSheet();
+    //     $activeWorksheet->setCellValue('B2', $title);
+    //     $activeWorksheet->setCellValue('B4', 'No');
+    //     $activeWorksheet->setCellValue('C4', 'Employee Name');
+    //     $activeWorksheet->setCellValue('D4', 'Employee ID');
+
+    //     $dataCategory = $categoryModel->where('year', $year)->findAll();
+    //     $totalCategories = count($dataCategory);
+
+    //     $categoryColumn = 'E';
+    //     $categoryColumns = [];
+    //     foreach ($dataCategory as $index => $dataCategory) {
+    //         $category = $dataCategory['category'];
+    //         $categoryColumns[$category] = $categoryColumn;
+
+    //         $statusDetails = $parameterModel->where('year', $year)
+    //             ->where('status', $dataCategory['status'])
+    //             ->findAll();
+
+    //         $mergeLength = count($statusDetails);
+    //         $lastColumn = chr(ord($categoryColumn) + $mergeLength - 1);
+    //         $activeWorksheet->mergeCells($categoryColumn . '4:' . $lastColumn . '4');
+
+    //         $categoryColumn = chr(ord($lastColumn) + 1);
+
+    //         foreach ($statusDetails as $key => $statusDetail) {
+    //             $activeWorksheet->setCellValue(chr(ord($categoryColumns[$category]) + $key) . '5', $statusDetail['status_detail']);
+    //         }
+
+    //         if ($index == $totalCategories - 2) {
+    //             break;
+    //         }
+    //     }
+
+    //     foreach ($categoryColumns as $category => $column) {
+    //         $activeWorksheet->setCellValue($column . '4', $category);
+    //     }
+
+    //     $dataStatusTarget = $categoryModel->getNomorStatus($year);
+    //     $dataTargetCategory = $categoryModel->where('year', $year)->where('status', $dataStatusTarget)->first();
+    //     $categoryTarget = $dataTargetCategory['category'];
+    //     $statusTarget = $dataTargetCategory['status'];
+    //     $targetLong = $targetDepartmentModel->getMaxStatusDetail($year, $statusTarget);
+
+    //     $activeWorksheet->setCellValue($categoryColumn . '4', $categoryTarget);
+    //     $lastTargetColumn = chr(ord($categoryColumn) + $targetLong - 1);
+
+    //     $activeWorksheet->mergeCells($categoryColumn . '4:' . $lastTargetColumn . '4');
+    //     for ($i = 0; $i < $targetLong; $i++) {
+    //         $activeWorksheet->setCellValue(chr(ord($categoryColumn) + $i) . '5', $i + 1);
+    //     }
+
+    //     $categoryColumn = chr(ord($lastTargetColumn) + 1);
+
+    //     $activeWorksheet->setCellValue($categoryColumn . '4', 'Self');
+    //     $activeWorksheet->mergeCells($categoryColumn . '4:' . $categoryColumn . '5');
+    //     $categoryColumn = chr(ord($categoryColumn) + 1);
+
+    //     $categoryLong = chr(ord($categoryColumn) - 1);
+
+    //     $alignHeader = 'B2:' . $categoryLong . '5';
+    //     $stylee = $activeWorksheet->getStyle($alignHeader);
+    //     $stylee->getAlignment()->setVertical("middle");
+    //     $stylee->getAlignment()->setHorizontal("center");
+
+    //     $activeWorksheet->mergeCells('B2:' . $categoryLong . '3');
+    //     $activeWorksheet->mergeCells('B4:B5');
+    //     $activeWorksheet->mergeCells('C4:C5');
+    //     $activeWorksheet->mergeCells('D4:D5');
+
+    //     $column = 6;
+
+    //     $activeWorksheet->getStyle('B2:' . $categoryLong . '4')->getFont()->setBold(true);
+
+    //     $styleArray = [
+    //         'borders' => [
+    //             'allBorders' => [
+    //                 'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+    //                 'color' => ['argb' => 'FF000000'],
+    //             ],
+    //         ],
+    //     ];
+
+    //     $activeWorksheet->getStyle('B2:' . $categoryLong . ($column - 1))->applyFromArray($styleArray);
+
+    //     $activeWorksheet->getColumnDimension('B')->setAutoSize(true);
+    //     $activeWorksheet->getColumnDimension('C')->setAutoSize(true);
+    //     $activeWorksheet->getColumnDimension('D')->setAutoSize(true);
+
+    //     $filename = "Final_Result_" . $year . ".xlsx";
+    //     $writer = new Xlsx($spreadsheet);
+    //     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    //     header('Content-Disposition: attachnebt;filename=' . $filename);
+    //     header('cache-Control: max-age=0');
+    //     $writer->save('php://output');
+    //     exit();
+    // }
 
 }

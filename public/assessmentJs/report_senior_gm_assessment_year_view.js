@@ -1,6 +1,14 @@
 $(document).ready(function () {
     const year = document.getElementById('year').getAttribute('data-year');
     getDataReportSenior(year);
+
+    $('#btn-export-result').click(function () {
+        exportDataPacking(year);
+    });
+
+    function exportDataPacking(year) {
+        window.location = '/export-data-result?year=' + year;
+    }
 });
 
 var currentPage;

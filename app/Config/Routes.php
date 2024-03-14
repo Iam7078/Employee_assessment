@@ -108,3 +108,6 @@ $routes->get('/data-tabel-report-leader-detail', 'AssessmentController::dataRepo
 // Report Senior Assessment
 $routes->get('/data-tabel-report-senior', 'AssessmentController::dataTabelReportSenior');
 $routes->get('/data-tabel-report-senior-detail', 'AssessmentController::dataReportSeniorDetail');
+
+// Final Result
+$routes->get('/export-data-result', 'AssessmentController::exportDataFinalResult');

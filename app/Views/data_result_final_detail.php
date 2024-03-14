@@ -30,6 +30,12 @@
                         <?= $year; ?>
                     </h4>
                 </div>
+                <div class="clearfix mb-20 d-flex justify-content-between align-items-center">
+                    <div class="d-flex ml-auto">
+                        <button id="btn-export-result" type="button" class="btn btn-success mr-2"><i
+                                class="mr-1 fa fa-file-excel-o"></i> Excel</button>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table class="data-table table table-sm stripe hover nowrap tabel-final" id="dataTable">
                         <thead>

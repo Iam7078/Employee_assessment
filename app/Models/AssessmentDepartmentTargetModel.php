@@ -43,4 +43,14 @@ class AssessmentDepartmentTargetModel extends Model
 
         return $item !== null;
     }
+
+    public function getMaxStatusDetail($year, $status)
+    {
+        $result = $this->where('year', $year)
+                    ->where('status', $status)
+                    ->selectMax('status_detail')
+                    ->first();
+        
+        return $result ? $result['status_detail'] : null;
+    }
 }
