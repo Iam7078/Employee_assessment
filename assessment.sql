@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 15, 2024 at 04:35 PM
+-- Generation Time: Mar 14, 2024 at 03:09 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -40,14 +40,27 @@ CREATE TABLE `assessment_category` (
 --
 
 INSERT INTO `assessment_category` (`id`, `year`, `status`, `category`, `weight`) VALUES
-(1, 2023, 1, 'INTERPERSONAL SKILLS', 20),
-(2, 2023, 2, 'KUALITAS KEPRIBADIAN', 10),
-(3, 2023, 3, 'KEAHLIAN TEKNIS', 20),
-(4, 2023, 4, 'TARGET DEPARTEMEN', 50),
-(5, 2024, 1, 'INTERPERSONAL SKILLS', 20),
-(6, 2024, 2, 'KUALITAS KEPRIBADIAN', 10),
-(7, 2024, 3, 'KEAHLIAN TEKNIS', 20),
-(8, 2024, 4, 'TARGET DEPARTEMEN', 50);
+(1, 2024, 1, 'INTERPERSONAL SKILLS', 20),
+(2, 2024, 2, 'KUALITAS KEPRIBADIAN', 10),
+(3, 2024, 3, 'KEAHLIAN TEKNIS', 20),
+(4, 2024, 4, 'TARGET DEPARTEMEN', 50);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `assessment_department_target`
+--
+
+CREATE TABLE `assessment_department_target` (
+  `id` int(11) NOT NULL,
+  `year` int(11) NOT NULL DEFAULT year(current_timestamp()),
+  `status` int(11) NOT NULL,
+  `status_detail` int(11) NOT NULL,
+  `employee_id` varchar(255) NOT NULL,
+  `parameter` varchar(255) NOT NULL,
+  `remark` varchar(255) NOT NULL,
+  `weight` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -70,22 +83,22 @@ CREATE TABLE `assessment_parameter` (
 --
 
 INSERT INTO `assessment_parameter` (`id`, `year`, `status`, `status_detail`, `parameter`, `remark`, `weight`) VALUES
-(1, 2024, 1, 1, 'KEPEMIMPINAN', 'Kemampuan menggunakan kewenangan untuk mempengaruhi, mengarahkan, memotivasi, dan mendidik untuk memaksimalkan sumber daya yang dimiliki dalam rangka mencapai tujuan perusahaan', 5),
-(2, 2024, 1, 2, 'INDEPENDENSI & INISIATIF', 'Kemampuan bekerja secara profesional meskipun tidak diawasi langsung oleh pimpinan\r\nKemampuan menemukan cara baru untuk mempermudan dan mempercepat pekerjaan', 3),
-(3, 2024, 2, 1, 'TINGKAT KEHADIRAN', '-', 2),
-(4, 2024, 2, 2, 'KETEPATAN WAKTU', '-', 2),
-(5, 2024, 1, 3, 'KERJASAMA TIM', 'Kemampuan bekerjasama secara internal departemen maupun eksternal departemen sehubungan dengan kelancaran proses pekerjaan', 3),
-(7, 2024, 1, 4, 'PEMECAHAN MASALAH', 'Kemampuan mengidentifikasi dan menganalisis masalah, mengemukakan alternatif-alternatif penyelesaiaan serta kemampuan menentukan cara penyelesaian paling efektif dan efisien', 3),
-(8, 2024, 1, 5, 'HUBUNGAN DENGAN PELANGGAN', 'Pemahaman tentang pentingnya pelanggan serta kualitas pelayanan terhadap pelanggan', 3),
-(9, 2024, 1, 6, 'PERILAKU', 'Antusiasme, keinginan, dan motivasi untuk maju dan berkembang', 3),
-(10, 2024, 2, 3, 'HUBUNGAN DENGAN ATASAN', '-', 2),
-(11, 2024, 2, 4, 'HUBUNGAN ANTAR REKAN KERJA', '-', 2),
-(12, 2024, 2, 5, 'HUBUNGAN DENGAN PROSES BERIKUTNYA', '-', 2),
-(13, 2024, 3, 1, 'PRODUKTIVITAS', 'Ketepatan waktu dan hasil kerja', 5),
-(14, 2024, 3, 2, 'KUALITAS KERJA', 'Akurasi, ketelitian, dan konsistensi dalam penyelesaian tugas yang diberikan', 5),
-(15, 2024, 3, 3, 'WAWASAN KERJA', 'Memiliki keahlian dan pengetahuan untuk memenuhi standar yang telah ditentukan', 4),
-(16, 2024, 3, 4, 'DAYA PAHAM', 'Kemampuan belajar, menyerap konsep yang esensial bagi pekerjaan, dan mengikuti instruksi', 3),
-(17, 2024, 3, 5, 'ORGANISASI', 'Kemampuan menangani banyak proyek secara bersamaan, menyusun skala prioritas tugas dan menyelesaikannya sesuai jadwal', 3);
+(1, 2024, 2, 1, 'TINGKAT KEHADIRAN', '-', 2),
+(2, 2024, 1, 1, 'KEPEMIMPINAN', 'Kemampuan menggunakan kewenangan untuk mempengaruhi, mengarahkan, memotivasi, dan mendidik untuk memaksimalkan sumber daya yang dimiliki dalam rangka mencapai tujuan perusahaan', 5),
+(3, 2024, 1, 2, 'INDEPENDENSI & INISIATIF', 'Kemampuan bekerja secara profesional meskipun tidak diawasi langsung oleh pimpinan\nKemampuan menemukan cara baru untuk mempermudan dan mempercepat pekerjaan', 3),
+(4, 2024, 1, 3, 'KERJASAMA TIM', 'Kemampuan bekerjasama secara internal departemen maupun eksternal departemen sehubungan dengan kelancaran proses pekerjaan', 3),
+(5, 2024, 1, 4, 'PEMECAHAN MASALAH', 'Kemampuan mengidentifikasi dan menganalisis masalah, mengemukakan alternatif-alternatif penyelesaiaan serta kemampuan menentukan cara penyelesaian paling efektif dan efisien', 3),
+(6, 2024, 1, 5, 'HUBUNGAN DENGAN PELANGGAN', 'Pemahaman tentang pentingnya pelanggan serta kualitas pelayanan terhadap pelanggan', 3),
+(7, 2024, 1, 6, 'PERILAKU', 'Antusiasme, keinginan, dan motivasi untuk maju dan berkembang', 3),
+(8, 2024, 2, 2, 'KETEPATAN WAKTU', '-', 2),
+(9, 2024, 2, 3, 'HUBUNGAN DENGAN ATASAN', '-', 2),
+(10, 2024, 2, 4, 'HUBUNGAN ANTAR REKAN KERJA', '-', 2),
+(11, 2024, 2, 5, 'HUBUNGAN DENGAN PROSES BERIKUTNYA', '-', 2),
+(12, 2024, 3, 1, 'PRODUKTIVITAS', 'Ketepatan waktu dan hasil kerja', 5),
+(13, 2024, 3, 2, 'KUALITAS KERJA', 'Akurasi, ketelitian, dan konsistensi dalam penyelesaian tugas yang diberikan', 5),
+(14, 2024, 3, 3, 'WAWASAN KERJA', 'Memiliki keahlian dan pengetahuan untuk memenuhi standar yang telah ditentukan', 4),
+(15, 2024, 3, 4, 'DAYA PAHAM', 'Kemampuan belajar, menyerap konsep yang esensial bagi pekerjaan, dan mengikuti instruksi', 3),
+(16, 2024, 3, 5, 'ORGANISASI', 'Kemampuan menangani banyak proyek secara bersamaan, menyusun skala prioritas tugas dan menyelesaikannya sesuai jadwal', 3);
 
 -- --------------------------------------------------------
 
@@ -107,10 +120,10 @@ CREATE TABLE `employee_account` (
 --
 
 INSERT INTO `employee_account` (`id`, `user_name`, `user_id`, `role`, `email`, `password`) VALUES
-(1, 'Admin Assessment', '7078', 'admin', 'adminassessment@gmail.com', 'admintimw'),
-(2, 'ADMIN YA', '7870', 'admin', 'ilhamgemoy@gmail.com', 'iam7870'),
-(3, 'KAZUNARI HIROSE', '11111111111', 'leader', 'KAZUNARIHIROSE@gmail.com', 'KAZUNARI HIROSE'),
-(4, 'TADASHI MIYAMOTO', '22222222222', 'leader', 'TADASHIMIYAMOTO@gmail.com', 'TADASHIMIYAMOTO'),
+(1, 'Admin Assessment', '7078', 'admin', 'adminassessment@gmail.com', 'admintimw1'),
+(2, 'KAZUNARI HIROSE', '001', 'leader', 'kazunarihirose1@gmail.com', 'kazunari1'),
+(3, 'TADASHI MIYAMOTO', '002', 'leader', 'tadashimiyamoto2@gmail.com', 'tadashi2'),
+(4, 'SENIOR GM', '003', 'seniorGm', 'seniorgmtimw@gmail.com', 'seniorGMtimw3'),
 (5, 'RAHMASARI', '20120700002', 'leader', '20120700002@gmail.com', '20120700002'),
 (6, 'AGOES KARTIKA ADI', '20120800003', 'leader', '20120800003@gmail.com', '20120800003'),
 (7, 'SUNARTI', '20120900005', 'employee', '20120900005@gmail.com', '20120900005'),
@@ -385,6 +398,111 @@ INSERT INTO `employee_detail` (`id`, `employee_name`, `employee_id`, `department
 (125, 'ENDAH SUPARTI', '20231007414', 'SEWING', 'SUPERVISOR', 'WAHYUNING'),
 (126, 'LAURENTINA LARASATI', '20231007416', 'PPIC', 'PPIC 1', 'RAHMASARI');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `leader_assessment`
+--
+
+CREATE TABLE `leader_assessment` (
+  `id` int(11) NOT NULL,
+  `year` int(11) NOT NULL DEFAULT year(current_timestamp()),
+  `employee_id` varchar(255) NOT NULL,
+  `final_grades` varchar(250) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `leader_assessment_detail`
+--
+
+CREATE TABLE `leader_assessment_detail` (
+  `id` int(11) NOT NULL,
+  `year` int(11) NOT NULL DEFAULT year(current_timestamp()),
+  `employee_id` varchar(255) NOT NULL,
+  `status` int(11) NOT NULL,
+  `status_detail` int(11) NOT NULL,
+  `value` varchar(250) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `score_proportion`
+--
+
+CREATE TABLE `score_proportion` (
+  `id` int(11) NOT NULL,
+  `year` int(11) NOT NULL DEFAULT year(current_timestamp()),
+  `self` int(11) NOT NULL,
+  `leader` int(11) NOT NULL,
+  `senior_gm` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `score_proportion`
+--
+
+INSERT INTO `score_proportion` (`id`, `year`, `self`, `leader`, `senior_gm`) VALUES
+(1, 2024, 30, 35, 35);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `self_assessment`
+--
+
+CREATE TABLE `self_assessment` (
+  `id` int(11) NOT NULL,
+  `year` int(11) NOT NULL DEFAULT year(current_timestamp()),
+  `employee_id` varchar(255) NOT NULL,
+  `final_grades` varchar(250) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `self_assessment_detail`
+--
+
+CREATE TABLE `self_assessment_detail` (
+  `id` int(11) NOT NULL,
+  `year` int(11) NOT NULL DEFAULT year(current_timestamp()),
+  `employee_id` varchar(255) NOT NULL,
+  `status` int(11) NOT NULL,
+  `status_detail` int(11) NOT NULL,
+  `value` varchar(250) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `senior_gm_assessment`
+--
+
+CREATE TABLE `senior_gm_assessment` (
+  `id` int(11) NOT NULL,
+  `year` int(11) NOT NULL DEFAULT year(current_timestamp()),
+  `employee_id` varchar(255) NOT NULL,
+  `final_grades` varchar(250) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `senior_gm_assessment_detail`
+--
+
+CREATE TABLE `senior_gm_assessment_detail` (
+  `id` int(11) NOT NULL,
+  `year` int(11) NOT NULL DEFAULT year(current_timestamp()),
+  `employee_id` varchar(255) NOT NULL,
+  `status` int(11) NOT NULL,
+  `status_detail` int(11) NOT NULL,
+  `value` varchar(250) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -393,6 +511,12 @@ INSERT INTO `employee_detail` (`id`, `employee_name`, `employee_id`, `department
 -- Indexes for table `assessment_category`
 --
 ALTER TABLE `assessment_category`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `assessment_department_target`
+--
+ALTER TABLE `assessment_department_target`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -414,6 +538,48 @@ ALTER TABLE `employee_detail`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `leader_assessment`
+--
+ALTER TABLE `leader_assessment`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `leader_assessment_detail`
+--
+ALTER TABLE `leader_assessment_detail`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `score_proportion`
+--
+ALTER TABLE `score_proportion`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `self_assessment`
+--
+ALTER TABLE `self_assessment`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `self_assessment_detail`
+--
+ALTER TABLE `self_assessment_detail`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `senior_gm_assessment`
+--
+ALTER TABLE `senior_gm_assessment`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `senior_gm_assessment_detail`
+--
+ALTER TABLE `senior_gm_assessment_detail`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -421,13 +587,19 @@ ALTER TABLE `employee_detail`
 -- AUTO_INCREMENT for table `assessment_category`
 --
 ALTER TABLE `assessment_category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `assessment_department_target`
+--
+ALTER TABLE `assessment_department_target`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `assessment_parameter`
 --
 ALTER TABLE `assessment_parameter`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `employee_account`
@@ -439,7 +611,49 @@ ALTER TABLE `employee_account`
 -- AUTO_INCREMENT for table `employee_detail`
 --
 ALTER TABLE `employee_detail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=127;
+
+--
+-- AUTO_INCREMENT for table `leader_assessment`
+--
+ALTER TABLE `leader_assessment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `leader_assessment_detail`
+--
+ALTER TABLE `leader_assessment_detail`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `score_proportion`
+--
+ALTER TABLE `score_proportion`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `self_assessment`
+--
+ALTER TABLE `self_assessment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `self_assessment_detail`
+--
+ALTER TABLE `self_assessment_detail`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `senior_gm_assessment`
+--
+ALTER TABLE `senior_gm_assessment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `senior_gm_assessment_detail`
+--
+ALTER TABLE `senior_gm_assessment_detail`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
